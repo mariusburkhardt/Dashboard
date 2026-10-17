@@ -1,0 +1,111 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+package "Domain" {
+    class StudyProgram {
+        +name: str
+        +start_date: date
+        +planned_semesters: int
+        +required_ects: float
+        +target_grade: float
+        +current_semester(today: date | None): int
+    }
+
+    class Semester {
+        +number: int
+        +start_date: date
+        +end_date: date
+    }
+
+    class Module {
+        +name: str
+        +ects: float
+    }
+
+    class Assessment {
+        +assessment_type: AssessmentType
+        +status: AssessmentStatus
+        +grade: float | None
+    }
+
+    enum AssessmentType {
+        EXAM
+        WORKBOOK
+        PORTFOLIO
+        CASE_STUDY
+        PROJECT_REPORT
+        PROJECT_PRESENTATION
+        TERM_PAPER
+        SEMINAR_PAPER
+    }
+
+    enum AssessmentStatus {
+        OPEN
+        IN_PROGRESS
+        PASSED
+        FAILED
+    }
+}
+
+package "Service" {
+    class DashboardService {
+        +build_dashboard_data(program: StudyProgram, today: date | None): DashboardData
+    }
+}
+
+package "Data transfer" {
+    class DashboardData
+    class ModuleDashboardRow
+    enum TargetStatus
+    enum OverallStatus
+    DashboardData *-- "0..*" ModuleDashboardRow
+    DashboardData ..> TargetStatus
+    DashboardData ..> OverallStatus
+}
+
+package "Persistence" {
+    interface StudyProgramRepository {
+        +load(): StudyProgram | None
+        +save(program: StudyProgram): None
+    }
+
+    class SQLiteStudyProgramRepository {
+        +load(): StudyProgram | None
+        +save(program: StudyProgram): None
+    }
+}
+
+package "Presentation" {
+    class DashboardController {
+        +load_dashboard_data(today: date | None): DashboardData
+    }
+
+    class DashboardView {
+        +run(): None
+    }
+}
+
+package "Startup" {
+    class DashboardApplication {
+        +start(): None
+    }
+}
+
+StudyProgram "1" o-- "0..*" Semester
+Semester "1" *-- "0..*" Module
+Module "1" *-- "1" Assessment
+Assessment ..> AssessmentType
+Assessment ..> AssessmentStatus
+SQLiteStudyProgramRepository ..|> StudyProgramRepository
+DashboardService ..> StudyProgram
+DashboardService ..> DashboardData
+DashboardController --> DashboardService
+DashboardController --> StudyProgramRepository
+DashboardView --> DashboardController
+DashboardView ..> DashboardData
+DashboardApplication ..> SQLiteStudyProgramRepository : creates
+DashboardApplication ..> DashboardService : creates
+DashboardApplication ..> DashboardController : wires
+DashboardApplication ..> DashboardView : starts
+@enduml

@@ -1,181 +1,110 @@
-# Studien-Dashboard Projekt
+# Studien-Dashboard
 
-Dieses Projekt dokumentiert die Planung, Architektur und prototypische Umsetzung eines Studien-Dashboards in Python.
+Ein Python-Prototyp zur Übersicht des Studienfortschritts im Studiengang
+Cyber Security. Die Architektur orientiert sich am Phase-1-Fachmodell und am
+Schichtenmodell aus Phase 2.
 
-## 1. Projektziel
+## Funktionen
 
-Das Dashboard soll einen schnellen Überblick über den Studienfortschritt geben und dabei folgende Kernziele unterstützen:
+- zeigt aktuelles und geplantes Semester sowie verbleibende Semester
+- berechnet bestandene ECTS, den ECTS-Fortschritt und den Notendurchschnitt
+- vergleicht ECTS-Fortschritt und Notendurchschnitt mit den gesetzten Zielen
+- stellt Module, Prüfungsarten, Prüfungsstatus und Noten in einer Tkinter-GUI dar
+- speichert einen Studiengang mit Semestern, Modulen und Prüfungsleistungen in
+  einer SQLite-Datenbank
 
-1. Abschluss in 3 Jahren
-2. Durchschnittsnote 2,0
-3. Erreichte ECTS / benötigte ECTS
+Beim ersten Start wird ein ausdrücklich als Beispiel gekennzeichneter
+Cyber-Security-Studiengang angelegt. Das Dashboard ist derzeit eine
+Leseansicht. Der Beispieldatensatz kann über `StudyProgramRepository.save()`
+durch eigene Daten ersetzt werden; die Datenbank liegt unter
+`data/study_dashboard.sqlite3`.
 
-Weitere mögliche Kennzahlen:
+## Architektur
 
-- Anzahl abgeschlossener Module vs. offener Module
-- Status der Prüfungsleistungen (bestanden / offen / nicht bestanden)
-- Prognose für verbleibende Semester
-- Trend der aktuellen Durchschnittsnote
+| Schicht | Klasse/Modul | Zuständigkeit |
+| --- | --- | --- |
+| Domain | `models.py` | Studiengang, Semester, Modul, Prüfungsleistung und Prüfungs-Enums |
+| Service | `dashboard.py` | ECTS-, Noten-, Zeit- und Zielberechnungen |
+| Repository-Abstraktion | `repositories.py` | Vertrag zum Laden und Speichern eines Studiengangs |
+| Repository-Implementierung | `storage.py` | SQLite-Schema und persistente Speicherung |
+| DTO | `dto.py` | Typisierte, für die Anzeige vorbereitete Daten |
+| Controller | `controller.py` | Verbindet Repository und Service |
+| View | `ui.py` | Darstellung in Tkinter, ohne Berechnungslogik |
+| Application | `application.py`, `main.py` | Erzeugt und verbindet die Schichten; Programmeinstieg |
 
-## 2. Dashboard-Inhalte
+Das UML-Klassendiagramm der Gesamtarchitektur liegt in
+[`docs/architecture.puml`](docs/architecture.puml).
 
-Das Dashboard soll folgende Bereiche enthalten:
+### OOP- und Modellierungsentscheidungen
 
-- Zielübersicht: Soll-Ist-Vergleich für Abschlussdauer und Durchschnittsnote
-- Fortschrittsanzeige: Prozentualer ECTS-Fortschritt
-- Modulstatus: Anzahl abgeschlossener und offener Module
-- Leistungsübersicht: Liste der aktuellen Module und Prüfungsleistungen
-- Visualisierung: Fortschrittsbalken, Ampelsystem oder einfache Diagramme
+- `StudyProgram`, `Semester`, `Module` und `Assessment` sind `dataclass`-
+  Fachklassen. Ihre Beziehung ist bewusst als Studiengang-Aggregation und
+  Semester-/Modul-Komposition modelliert.
+- Ein Modul besitzt genau eine Prüfungsleistung. `AssessmentStatus` und
+  `AssessmentType` sind Enums; eine bestandene Prüfung muss eine gültige Note
+  haben. Getter/Setter sind für die einfachen Datenträger nicht erforderlich.
+- Prüfungsarten bleiben Werte eines Enums statt Unterklassen von `Assessment`.
+  Für unterschiedliche Prüfungsverhalten gibt es im Fachmodell derzeit keine
+  Regel, die eine Vererbungshierarchie rechtfertigen würde.
+- Mehrere Fachobjekte betreffende Berechnungen liegen im `DashboardService`.
+  Der `DashboardController` hängt vom Repository-Protokoll und nicht von der
+  SQLite-Implementierung ab. Damit kann die Speicherung ausgetauscht und der
+  Controller mit einem Test-Repository geprüft werden.
 
-Die Skizze sollte so gestaltet sein, dass die Ziele aus Punkt 1 sofort sichtbar sind.
+### Berechnungs- und Ampellogik
 
-## 3. UML-Modell (Konzeptionsphase)
+- Ein Studiensemester umfasst sechs Monate ab dem Studienstart.
+- Das ECTS-Soll steigt pro abgeschlossenem Plansemester gleichmäßig bis zur
+  Gesamtzahl der erforderlichen ECTS.
+- Erreichte ECTS zählen nur für bestandene Prüfungsleistungen.
+- Der Notendurchschnitt ist das arithmetische Mittel der bestandenen
+  Prüfungsleistungen. Eine bestandene Leistung benötigt eine Note zwischen
+  1,0 und 4,0.
+- Der Gesamtstatus ist **Im Plan**, wenn ECTS- und Notenziel erfüllt und die
+  geplante Studiendauer nicht überschritten ist. Ein verfehltes Leistungsziel
+  oder ein noch nicht vorhandener Notendurchschnitt führt zu
+  **Aufmerksamkeit erforderlich**. Nach Überschreiten der geplanten Dauer
+  lautet der Status **Geplante Studiendauer überschritten**.
 
-### Kernklassen
+Diese Schwellen sind explizite Prototypregeln und können bei Bedarf fachlich
+angepasst werden.
 
-- `Studiengang`
-- `Semester`
-- `Modul`
-- `Pruefungsleistung`
+## Projektstruktur
 
-### Beziehungen
-
-- `Studiengang` 1..* `Semester`
-- `Semester` 1..* `Modul`
-- `Modul` 1..* `Pruefungsleistung`
-
-### Objektorientierte Konzepte
-
-- **Klasse**: Jede Entity wird als eigene Klasse modelliert.
-- **Abstraktion**: Nur relevante Eigenschaften werden aufgenommen.
-- **Komposition**: `Semester` besteht aus `Modul`-Objekten; `Modul` besteht aus `Pruefungsleistung`-Objekten.
-- **Aggregation**: `Studiengang` fasst Semester zusammen.
-- **Vererbung**: Optional im späteren Modell, z. B. `Pruefungsleistung` als Basisklasse mit spezifischen Unterklassen wie `Klausur` oder `Hausarbeit`.
-
-### Modellentscheidungen
-
-- `Studiengang` enthält grundlegende Ziele (Abschlussdauer, Zielnote).
-- `Semester` gruppiert Module nach Studienabschnitten.
-- `Modul` fasst fachliche Inhalte zusammen und besitzt ECTS, Status und Prüfungsleistungen.
-- `Pruefungsleistung` speichert konkrete Ergebnisse und kann zur Berechnung des Notendurchschnitts genutzt werden.
-
-## 4. Python-Architektur
-
-### Empfohlene Projektstruktur
-
-- `src/`
-  - `models.py`
-  - `storage.py`
-  - `dashboard.py`
-  - `ui.py`
-  - `main.py`
-- `data/`
-  - `study_data.json`
-- `tests/`
-  - `test_models.py`
-  - `test_storage.py`
-- `requirements.txt`
-- `README.md`
-
-### Module und Verantwortung
-
-- `models.py`: Datenklassen für `StudyProgram`, `Semester`, `Module` und `Assessment`.
-- `storage.py`: Lesen und Schreiben von JSON-Dateien, später ggf. SQLite.
-- `dashboard.py`: Berechnung der Kennzahlen wie Durchschnittsnote, ECTS-Fortschritt, Zielerreichung.
-- `ui.py`: Benutzeroberfläche für die Kommandozeile; ggf. später GUI.
-- `main.py`: Startpunkt der Anwendung.
-
-### Technologievorschlag
-
-- Python 3.11 oder 3.12
-- VS Code oder PyCharm
-- `PyPDF2` für PDF-Analyse (falls benötigt)
-- `matplotlib` oder `plotly` für Diagramme
-- `pytest` für Tests
-
-### Speicherentscheidung
-
-Für den Prototypen empfehlen wir:
-
-- Speicherung in einer JSON-Datei
-- späteres Upgrade auf SQLite falls erforderlich
-
-Begründung:
-
-- JSON ist leicht verständlich und schnell implementierbar
-- gut geeignet für einen Prototypen ohne Datenbank-Overhead
-
-### Benutzerinteraktion
-
-- Zuerst Kommandozeile
-- GUI nur optional als Erweiterung
-
-## 5. Aktueller Stand in diesem Ordner
-
-- `src/`: Python-Quellcode für das Dashboard-Projekt
-- `data/study_data.json`: Beispiel-Daten für das Studienprogramm
-- `tests/`: Unit-Tests für Modell- und Speicherlogik
-- `requirements.txt`: Testabhängigkeiten
-- `README.md`: Projekt- und Architektur-Dokumentation
-- `Aufgabenstellung_DLBDSOOFPP01_D.pdf`: Aufgabenstellung für das Projekt
-
-## 6. Ausführung des aktuellen Projekts
-
-### Schritt 1: Terminal öffnen
-
-In PowerShell:
-
-```powershell
-cd \\DS220\Repository\development\studienprojekte\Dashboard
+```text
+Dashboard/
+├── data/                 # SQLite-Datenbank (wird beim Start angelegt)
+├── docs/architecture.puml
+├── src/
+│   ├── application.py
+│   ├── controller.py
+│   ├── dashboard.py
+│   ├── dto.py
+│   ├── main.py
+│   ├── models.py
+│   ├── repositories.py
+│   ├── sample_data.py
+│   ├── storage.py
+│   └── ui.py
+├── tests/
+└── requirements.txt
 ```
 
-### Schritt 2: Abhängigkeiten installieren
+## Starten
+
+Voraussetzung: Python 3.11 oder neuer mit Tkinter-Unterstützung.
 
 ```powershell
-python -m pip install -r requirements.txt
-```
-
-### Schritt 3: Dashboard starten
-
-```powershell
+cd .\Dashboard
 python -m src.main
 ```
 
-### Schritt 4: Tests ausführen
+Runtime-Abhängigkeiten außerhalb der Python-Standardbibliothek gibt es nicht.
+
+## Tests
 
 ```powershell
+cd .\Dashboard
+python -m pip install -r requirements.txt
 python -m pytest -q
 ```
-
-### Alternative: Notebook ausführen
-
-Falls du die PDF-Analyse weiter bearbeiten möchtest, öffne `pdf_project_setup_fixed.ipynb` in VS Code und führe die Zellen von oben nach unten aus.
-
-## 7. Nächste Schritte
-
-1. Erstelle die Dashboard-Skizze und halte sie im Konzeptdokument fest.
-2. Zeichne ein erstes UML-Diagramm mit den vier Kernklassen.
-3. Implementiere ein kleines Python-Testprogramm für `Semester`, `Modul` und `Pruefungsleistung`.
-4. Wähle die Bibliotheken und beschreibe die Gründe im Konzept.
-5. Erstelle die ersten Prototypen in Python auf Basis der vorgeschlagenen Architektur.
-
-## 8. Hinweise für die Portfolio-Phasen
-
-### Konzeptionsphase
-- Ziele definieren
-- Dashboard-Skizze erstellen
-- UML-Diagramm anfertigen
-- Entwicklungsumgebung und Werkzeuge begründen
-
-### Erarbeitungs-/Reflexionsphase
-- Untersuchung der OOP-Konzepte in Python
-- Gesamtarchitektur entwerfen
-- UML-Klassendiagramm erweitern
-- Reflexionsdokument schreiben
-
-### Finalisierungsphase
-- Prototyp implementieren
-- Quellcode in GitHub verwalten
-- Installationsanleitung erstellen
-- Projektverzeichnis strukturieren
-- Abstract schreiben

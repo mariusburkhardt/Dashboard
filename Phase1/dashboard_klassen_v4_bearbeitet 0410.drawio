@@ -1,0 +1,178 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
+    <mxGraphModel dx="1410" dy="979" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="class-studiengang" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Studiengang" vertex="1">
+          <mxGeometry height="268" width="250" x="41" y="29" as="geometry">
+            <mxRectangle height="30" width="100" x="40" y="716" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="class-studiengang-r1" parent="class-studiengang" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- name: String" vertex="1">
+          <mxGeometry height="26" width="250" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="class-studiengang-r2" parent="class-studiengang" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- studienstart: Date" vertex="1">
+          <mxGeometry height="26" width="250" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="class-studiengang-r3" parent="class-studiengang" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- geplante_semester: Integer" vertex="1">
+          <mxGeometry height="26" width="250" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="class-studiengang-r4" parent="class-studiengang" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- soll_ects: Integer" vertex="1">
+          <mxGeometry height="26" width="250" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="class-studiengang-r5" parent="class-studiengang" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- zielnote: Real" vertex="1">
+          <mxGeometry height="26" width="250" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="tEY8uZEWRicOPfpRnQYV-12" parent="class-studiengang" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="250" y="156" as="geometry" />
+        </mxCell>
+        <mxCell id="class-studiengang-r6" parent="class-studiengang" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ berechne_notendurchschnitt(): Real" vertex="1">
+          <mxGeometry height="26" width="250" y="164" as="geometry" />
+        </mxCell>
+        <mxCell id="class-studiengang-r7" parent="class-studiengang" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ berechne_ects_erreicht(): Integer" vertex="1">
+          <mxGeometry height="26" width="250" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="class-studiengang-r8" parent="class-studiengang" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ berechne_gesamtfortschritt(): Real" vertex="1">
+          <mxGeometry height="26" width="250" y="216" as="geometry" />
+        </mxCell>
+        <mxCell id="class-studiengang-r9" parent="class-studiengang" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ berechne_aktuelles_semester(): Integer" vertex="1">
+          <mxGeometry height="26" width="250" y="242" as="geometry" />
+        </mxCell>
+        <mxCell id="class-modul" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Modul" vertex="1">
+          <mxGeometry height="78" width="180" x="559" y="381" as="geometry">
+            <mxRectangle height="30" width="100" x="40" y="716" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="class-modul-r1" parent="class-modul" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- modulname: String" vertex="1">
+          <mxGeometry height="26" width="180" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="class-modul-r2" parent="class-modul" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- ects: Integer" vertex="1">
+          <mxGeometry height="26" width="180" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="class-pruefung" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Pruefungsleistung" vertex="1">
+          <mxGeometry height="138" width="230" x="367" y="588" as="geometry">
+            <mxRectangle height="30" width="100" x="40" y="716" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="class-pruefung-r1" parent="class-pruefung" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- pruefungsart: PruefungsArt" vertex="1">
+          <mxGeometry height="26" width="230" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="class-pruefung-r2" parent="class-pruefung" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- note: Real [0..1]" vertex="1">
+          <mxGeometry height="26" width="230" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="class-pruefung-r3" parent="class-pruefung" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- status: PruefungsStatus" vertex="1">
+          <mxGeometry height="26" width="230" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="tEY8uZEWRicOPfpRnQYV-13" parent="class-pruefung" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="230" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="class-pruefung-r4" parent="class-pruefung" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ bewerten(note: Real): void" vertex="1">
+          <mxGeometry height="26" width="230" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="class-status" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="&amp;lt;&amp;lt;enumeration&amp;gt;&amp;gt;&lt;br&gt;PruefungsStatus" vertex="1">
+          <mxGeometry height="144" width="210" x="81" y="605" as="geometry">
+            <mxRectangle height="30" width="100" x="520" y="651" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="class-status-r1" parent="class-status" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="OFFEN" vertex="1">
+          <mxGeometry height="26" width="210" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="class-status-r2" parent="class-status" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="IN_PRUEFUNG" vertex="1">
+          <mxGeometry height="26" width="210" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="class-status-r3" parent="class-status" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="BESTANDEN" vertex="1">
+          <mxGeometry height="26" width="210" y="92" as="geometry" />
+        </mxCell>
+        <mxCell id="class-status-r4" parent="class-status" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="NICHT_BESTANDEN" vertex="1">
+          <mxGeometry height="26" width="210" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="class-semester" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Semester" vertex="1">
+          <mxGeometry height="104" width="200" x="549" y="111" as="geometry">
+            <mxRectangle height="30" width="100" x="40" y="716" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="class-semester-r1" parent="class-semester" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- semesternummer: Integer" vertex="1">
+          <mxGeometry height="26" width="200" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="class-semester-r2" parent="class-semester" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- startdatum: Date" vertex="1">
+          <mxGeometry height="26" width="200" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="class-semester-r3" parent="class-semester" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="- enddatum: Date" vertex="1">
+          <mxGeometry height="26" width="200" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="class-art" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=41;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="&amp;lt;&amp;lt;enumeration&amp;gt;&amp;gt;&lt;div&gt;PruefungsArt&lt;/div&gt;" vertex="1">
+          <mxGeometry height="249" width="240" x="51" y="327" as="geometry">
+            <mxRectangle height="30" width="100" x="40" y="716" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="class-art-r1" parent="class-art" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="KLAUSUR" vertex="1">
+          <mxGeometry height="26" width="240" y="41" as="geometry" />
+        </mxCell>
+        <mxCell id="class-art-r2" parent="class-art" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="WORKBOOK" vertex="1">
+          <mxGeometry height="26" width="240" y="67" as="geometry" />
+        </mxCell>
+        <mxCell id="class-art-r3" parent="class-art" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="PORTFOLIO" vertex="1">
+          <mxGeometry height="26" width="240" y="93" as="geometry" />
+        </mxCell>
+        <mxCell id="class-art-r4" parent="class-art" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="FALLSTUDIE" vertex="1">
+          <mxGeometry height="26" width="240" y="119" as="geometry" />
+        </mxCell>
+        <mxCell id="class-art-r5" parent="class-art" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="PROJEKTBERICHT" vertex="1">
+          <mxGeometry height="26" width="240" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="class-art-r6" parent="class-art" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="PROJEKTPRAESENTATION" vertex="1">
+          <mxGeometry height="26" width="240" y="171" as="geometry" />
+        </mxCell>
+        <mxCell id="class-art-r7" parent="class-art" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="HAUSARBEIT" vertex="1">
+          <mxGeometry height="26" width="240" y="197" as="geometry" />
+        </mxCell>
+        <mxCell id="class-art-r8" parent="class-art" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="SEMINARARBEIT" vertex="1">
+          <mxGeometry height="26" width="240" y="223" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-modul-pruefung" edge="1" parent="1" source="class-modul" style="endArrow=none;html=1;rounded=0;" target="class-pruefung">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-modul-pruefung-label1" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1" vertex="1">
+          <mxGeometry height="26" width="70" x="594" y="459" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-modul-pruefung-label2" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1" vertex="1">
+          <mxGeometry height="26" width="70" x="521" y="564" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-modul-pruefung-label3" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="hat" vertex="1">
+          <mxGeometry height="26" width="70" x="557" y="512" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-studiengang-semester" edge="1" parent="1" source="class-studiengang" style="endArrow=none;html=1;rounded=0;" target="class-semester">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-studiengang-semester-label1" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1" vertex="1">
+          <mxGeometry height="26" width="70" x="275" y="136" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-studiengang-semester-label2" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="0..*" vertex="1">
+          <mxGeometry height="26" width="70" x="489" y="134" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-semester-modul" edge="1" parent="1" source="class-semester" style="endArrow=none;html=1;rounded=0;" target="class-modul">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-semester-modul-label1" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1" vertex="1">
+          <mxGeometry height="26" width="70" x="597" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-semester-modul-label2" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="0..*" vertex="1">
+          <mxGeometry height="26" width="70" x="591" y="355" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-pruefung-status" edge="1" parent="1" source="class-pruefung" style="dashed=1;endArrow=open;html=1;rounded=0;" target="class-status">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel-pruefung-art" edge="1" parent="1" source="class-pruefung" style="dashed=1;endArrow=open;html=1;rounded=0;" target="class-art">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tEY8uZEWRicOPfpRnQYV-15" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="hat" vertex="1">
+          <mxGeometry height="26" width="70" x="393" y="134" as="geometry" />
+        </mxCell>
+        <mxCell id="tEY8uZEWRicOPfpRnQYV-18" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="hat" vertex="1">
+          <mxGeometry height="26" width="70" x="597" y="285" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

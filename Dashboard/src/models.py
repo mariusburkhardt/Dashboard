@@ -1,128 +1,103 @@
 from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import List, Optional
+from datetime import date
+from enum import Enum
+
+
+class AssessmentType(Enum):
+    EXAM = "Klausur"
+    WORKBOOK = "Workbook"
+    PORTFOLIO = "Portfolio"
+    CASE_STUDY = "Fallstudie"
+    PROJECT_REPORT = "Projektbericht"
+    PROJECT_PRESENTATION = "Projektpräsentation"
+    TERM_PAPER = "Hausarbeit"
+    SEMINAR_PAPER = "Seminararbeit"
+
+
+class AssessmentStatus(Enum):
+    OPEN = "Offen"
+    IN_PROGRESS = "In Bearbeitung"
+    PASSED = "Bestanden"
+    FAILED = "Nicht bestanden"
 
 
 @dataclass
 class Assessment:
-    name: str
-    grade: Optional[float] = None
-    ects: float = 0.0
-    passed: bool = False
-    comment: str = ""
+    assessment_type: AssessmentType
+    status: AssessmentStatus = AssessmentStatus.OPEN
+    grade: float | None = None
 
-    def is_completed(self) -> bool:
-        return self.passed or self.grade is not None
+    def __post_init__(self) -> None:
+        """Validate the grade against the assessment status."""
+        if self.grade is not None and self.status is not AssessmentStatus.PASSED:
+            raise ValueError("A grade can only be set for a passed assessment.")
+        if self.status is AssessmentStatus.PASSED and self.grade is None:
+            raise ValueError("A passed assessment must have a grade.")
+        if self.grade is not None and not 1.0 <= self.grade <= 4.0:
+            raise ValueError("A passing grade must be between 1.0 and 4.0.")
 
 
 @dataclass
 class Module:
-    code: str
     name: str
-    ects: float
-    assessments: List[Assessment] = field(default_factory=list)
-    completed: bool = False
+    ects: float = 5.0
+    assessment: Assessment = field(
+        default_factory=lambda: Assessment(AssessmentType.EXAM)
+    )
 
-    def earned_ects(self) -> float:
-        return self.ects if self.completed else 0.0
-
-    def average_grade(self) -> Optional[float]:
-        grades = [assessment.grade for assessment in self.assessments if assessment.grade is not None]
-        if not grades:
-            return None
-        return sum(grades) / len(grades)
-
-    def to_dict(self) -> dict:
-        return {
-            "code": self.code,
-            "name": self.name,
-            "ects": self.ects,
-            "completed": self.completed,
-            "assessments": [assessment.__dict__ for assessment in self.assessments],
-        }
-
-    @staticmethod
-    def from_dict(data: dict) -> "Module":
-        assessments = [Assessment(**assessment_data) for assessment_data in data.get("assessments", [])]
-        return Module(
-            code=data["code"],
-            name=data["name"],
-            ects=data["ects"],
-            completed=data.get("completed", False),
-            assessments=assessments,
-        )
+    def __post_init__(self) -> None:
+        """Validate the module name and its ECTS value."""
+        if not self.name.strip():
+            raise ValueError("A module name cannot be empty.")
+        if self.ects <= 0:
+            raise ValueError("ECTS must be greater than zero.")
 
 
 @dataclass
 class Semester:
     number: int
-    modules: List[Module] = field(default_factory=list)
+    start_date: date
+    end_date: date
+    modules: list[Module] = field(default_factory=list)
 
-    def total_ects(self) -> float:
-        return sum(module.ects for module in self.modules)
-
-    def completed_ects(self) -> float:
-        return sum(module.earned_ects() for module in self.modules)
-
-    def average_grade(self) -> Optional[float]:
-        module_grades = [grade for module in self.modules if (grade := module.average_grade()) is not None]
-        if not module_grades:
-            return None
-        return sum(module_grades) / len(module_grades)
-
-    def to_dict(self) -> dict:
-        return {
-            "number": self.number,
-            "modules": [module.to_dict() for module in self.modules],
-        }
-
-    @staticmethod
-    def from_dict(data: dict) -> "Semester":
-        modules = [Module.from_dict(module_data) for module_data in data.get("modules", [])]
-        return Semester(number=data["number"], modules=modules)
+    def __post_init__(self) -> None:
+        """Validate the semester number and date range."""
+        if self.number < 1:
+            raise ValueError("A semester number must be positive.")
+        if self.end_date < self.start_date:
+            raise ValueError("A semester cannot end before it starts.")
 
 
 @dataclass
 class StudyProgram:
     name: str
-    target_years: int = 3
-    target_grade: float = 2.0
+    start_date: date
+    planned_semesters: int = 6
     required_ects: float = 180.0
-    semesters: List[Semester] = field(default_factory=list)
+    target_grade: float = 2.0
+    semesters: list[Semester] = field(default_factory=list)
 
-    def total_ects(self) -> float:
-        return sum(semester.total_ects() for semester in self.semesters)
-
-    def completed_ects(self) -> float:
-        return sum(semester.completed_ects() for semester in self.semesters)
-
-    def progress_percentage(self) -> float:
+    def __post_init__(self) -> None:
+        """Validate the study program's goals and identifying name."""
+        if not self.name.strip():
+            raise ValueError("A study program name cannot be empty.")
+        if self.planned_semesters < 1:
+            raise ValueError("The planned number of semesters must be positive.")
         if self.required_ects <= 0:
-            return 0.0
-        return min(100.0, (self.completed_ects() / self.required_ects) * 100.0)
+            raise ValueError("Required ECTS must be greater than zero.")
+        if not 1.0 <= self.target_grade <= 4.0:
+            raise ValueError("The target grade must be between 1.0 and 4.0.")
 
-    def average_grade(self) -> Optional[float]:
-        semester_grades = [grade for semester in self.semesters if (grade := semester.average_grade()) is not None]
-        if not semester_grades:
-            return None
-        return sum(semester_grades) / len(semester_grades)
-
-    def to_dict(self) -> dict:
-        return {
-            "name": self.name,
-            "target_years": self.target_years,
-            "target_grade": self.target_grade,
-            "required_ects": self.required_ects,
-            "semesters": [semester.to_dict() for semester in self.semesters],
-        }
-
-    @staticmethod
-    def from_dict(data: dict) -> "StudyProgram":
-        semesters = [Semester.from_dict(semester_data) for semester_data in data.get("semesters", [])]
-        return StudyProgram(
-            name=data["name"],
-            target_years=data.get("target_years", 3),
-            target_grade=data.get("target_grade", 2.0),
-            required_ects=data.get("required_ects", 180.0),
-            semesters=semesters,
+    def current_semester(self, today: date | None = None) -> int:
+        """Calculate the current six-month semester from the start date."""
+        current_date = today or date.today()
+        elapsed_months = (
+            (current_date.year - self.start_date.year) * 12
+            + current_date.month
+            - self.start_date.month
         )
+        if current_date.day < self.start_date.day:
+            elapsed_months -= 1
+        return max(1, elapsed_months // 6 + 1)

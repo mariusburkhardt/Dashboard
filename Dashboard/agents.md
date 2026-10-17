@@ -1,34 +1,22 @@
-# General Development Rules
+# Development Guidelines
 
-## Sprache
-- Alle Kommentare auf Deutsch.
-- Alle Code Abschnitte Kommentieren
-- Variablen und Funktionen auf Englisch.
+## Language and naming
 
-## Qualität
-- Clean Code.
-- DRY beachten.
-- Keine unnötigen Bibliotheken.
+- Use English for Python identifiers and German for user-facing interface text.
+- Write comments and docstrings in German when clarification is needed.
+- Use `snake_case` for functions and variables and `PascalCase` for classes.
 
-## Sicherheit
-- Keine Passwörter im Code.
-- Secrets nur über .env.
-- Eingaben validieren.
+## Quality
 
-## Dokumentation
-- README aktuell halten.
-- Falls keine Readme im aktuellen Ordner erhalten ist, eine erstellen
-- Docstrings für alle Funktionen.
-- Änderungen dokumentieren.
+- Follow PEP 8 and add type hints to application code.
+- Keep responsibilities in the domain, service, repository, controller, view,
+  and application layers.
+- Use the Python standard library for runtime functionality unless a dependency
+  is justified.
+- Validate domain input and surface unexpected errors rather than hiding them.
 
-## Python
-- PEP 8
-- Type Hints
-- Logging statt print()
+## Documentation and tests
 
-## Git
-- Kleine Commits
-- Aussagekräftige Commit-Messages
-
-## Tests
-- Neue Funktionen nach Möglichkeit mit Unit-Tests versehen.
+- Keep the README and architecture diagram aligned with code changes.
+- Add or update focused unit tests for changed behavior.
+- Run the relevant tests with `python -m pytest -q`.

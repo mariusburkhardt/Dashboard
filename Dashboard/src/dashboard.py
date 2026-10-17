@@ -1,20 +1,104 @@
-from typing import Dict, Optional
+from __future__ import annotations
 
-from .models import StudyProgram
+from datetime import date
 
-
-def build_dashboard_summary(program: StudyProgram) -> Dict[str, Optional[float]]:
-    return {
-        "program_name": program.name,
-        "required_ects": program.required_ects,
-        "completed_ects": program.completed_ects(),
-        "progress_percent": program.progress_percentage(),
-        "current_average_grade": program.average_grade(),
-        "target_grade": program.target_grade,
-        "target_years": program.target_years,
-    }
+from .dto import (
+    DashboardData,
+    ModuleDashboardRow,
+    OverallStatus,
+    TargetStatus,
+)
+from .models import AssessmentStatus, StudyProgram
 
 
-def is_target_on_track(program: StudyProgram) -> bool:
-    average_grade = program.average_grade()
-    return average_grade is not None and average_grade <= program.target_grade
+class DashboardService:
+    """Calculate dashboard indicators from the study domain model."""
+
+    def build_dashboard_data(
+        self, program: StudyProgram, today: date | None = None
+    ) -> DashboardData:
+        """Build the presentation data for a study program."""
+        current_semester = program.current_semester(today)
+        elapsed_planned_semesters = min(
+            current_semester - 1, program.planned_semesters
+        )
+        expected_ects = (
+            program.required_ects
+            * elapsed_planned_semesters
+            / program.planned_semesters
+        )
+        modules = tuple(
+            ModuleDashboardRow(
+                semester_number=semester.number,
+                module_name=module.name,
+                ects=module.ects,
+                assessment_type=module.assessment.assessment_type.value,
+                assessment_status=module.assessment.status.value,
+                grade=module.assessment.grade,
+            )
+            for semester in program.semesters
+            for module in semester.modules
+        )
+        completed_ects = sum(
+            module.ects
+            for semester in program.semesters
+            for module in semester.modules
+            if module.assessment.status is AssessmentStatus.PASSED
+        )
+        grades = [
+            module.assessment.grade
+            for semester in program.semesters
+            for module in semester.modules
+            if module.assessment.status is AssessmentStatus.PASSED
+            and module.assessment.grade is not None
+        ]
+        average_grade = sum(grades) / len(grades) if grades else None
+        time_status = (
+            TargetStatus.BEHIND
+            if current_semester > program.planned_semesters
+            else TargetStatus.ON_TRACK
+        )
+        ects_status = (
+            TargetStatus.ON_TRACK
+            if completed_ects >= expected_ects
+            else TargetStatus.BEHIND
+        )
+        grade_status = (
+            TargetStatus.NO_DATA
+            if average_grade is None
+            else TargetStatus.ON_TRACK
+            if average_grade <= program.target_grade
+            else TargetStatus.BEHIND
+        )
+
+        if time_status is TargetStatus.BEHIND:
+            overall_status = OverallStatus.OVERDUE
+        elif (
+            ects_status is TargetStatus.BEHIND
+            or grade_status is not TargetStatus.ON_TRACK
+        ):
+            overall_status = OverallStatus.AT_RISK
+        else:
+            overall_status = OverallStatus.ON_TRACK
+
+        return DashboardData(
+            program_name=program.name,
+            current_semester=current_semester,
+            planned_semesters=program.planned_semesters,
+            remaining_semesters=max(
+                0, program.planned_semesters - current_semester
+            ),
+            required_ects=program.required_ects,
+            completed_ects=completed_ects,
+            progress_percentage=min(
+                100.0, completed_ects / program.required_ects * 100
+            ),
+            expected_ects=expected_ects,
+            target_grade=program.target_grade,
+            average_grade=average_grade,
+            time_status=time_status,
+            ects_status=ects_status,
+            grade_status=grade_status,
+            overall_status=overall_status,
+            modules=modules,
+        )
