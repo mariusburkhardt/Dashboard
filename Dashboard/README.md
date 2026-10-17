@@ -77,6 +77,8 @@ Dashboard/
 ├── agents.md
 ├── data/                         # SQLite-Datenbank (wird beim Start angelegt)
 ├── docs/
+│   ├── Installationsanleitung.html
+│   ├── Installationsanleitung.pdf
 │   └── architecture.puml
 ├── requirements.txt
 ├── src/
@@ -108,6 +110,11 @@ python -m src.main
 ```
 
 Runtime-Abhängigkeiten außerhalb der Python-Standardbibliothek gibt es nicht.
+
+Eine schrittweise Windows-Anleitung zum Klonen, Prüfen und Starten des Projekts
+steht in der [Installationsanleitung (PDF)](docs/Installationsanleitung.pdf).
+Die bearbeitbare [HTML-Quelle](docs/Installationsanleitung.html) liegt daneben.
+Repository: <https://github.com/mariusburkhardt/Dashboard>
 
 ## Tests
 

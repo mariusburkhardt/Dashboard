@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>Installationsanleitung – Studien-Dashboard</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 16mm 18mm;
+    }
+
+    body {
+      color: #243447;
+      font-family: "Aptos", "Arial", sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.38;
+    }
+
+    h1 {
+      color: #154360;
+      font-size: 23pt;
+      margin: 0 0 3mm;
+    }
+
+    h2 {
+      color: #154360;
+      font-size: 13pt;
+      margin: 5mm 0 1.5mm;
+    }
+
+    p {
+      margin: 1.5mm 0;
+    }
+
+    ol {
+      margin: 1.5mm 0 2mm;
+      padding-left: 7mm;
+    }
+
+    li {
+      margin: 1.3mm 0;
+      padding-left: 1mm;
+    }
+
+    pre {
+      background: #f2f5f7;
+      border-left: 3px solid #2874a6;
+      font-family: Consolas, monospace;
+      font-size: 9pt;
+      line-height: 1.35;
+      margin: 1.5mm 0 2mm;
+      padding: 2.5mm 3mm;
+      white-space: pre-wrap;
+    }
+
+    a {
+      color: #145a86;
+      text-decoration: underline;
+    }
+
+    .subtitle {
+      color: #52677a;
+      font-size: 11pt;
+      margin-bottom: 4mm;
+    }
+
+    .note {
+      background: #eef5f8;
+      border-left: 3px solid #2874a6;
+      margin-top: 2mm;
+      padding: 2mm 3mm;
+    }
+
+    .footer {
+      border-top: 1px solid #ccd6dd;
+      color: #52677a;
+      font-size: 9pt;
+      margin-top: 5mm;
+      padding-top: 2mm;
+    }
+  </style>
+</head>
+<body>
+  <h1>Installationsanleitung</h1>
+  <p class="subtitle">Studien-Dashboard · Windows · Python 3.11 oder neuer</p>
+
+  <p>
+    Das Dashboard zeigt den Studienfortschritt in einer grafischen Oberfläche.
+    Es benötigt keine zusätzlichen Laufzeitpakete: Tkinter und SQLite gehören
+    zur Python-Standardbibliothek.
+  </p>
+
+  <h2>1. Voraussetzungen prüfen</h2>
+  <p>
+    Installieren Sie Python 3.11 oder neuer von
+    <a href="https://www.python.org/downloads/">python.org</a>. Achten Sie im
+    Installer darauf, Tcl/Tk und IDLE mitzuinstallieren. Installieren Sie Git,
+    falls es noch nicht vorhanden ist.
+  </p>
+
+  <h2>2. Repository herunterladen</h2>
+  <p>
+    Öffnen Sie PowerShell und führen Sie die folgenden Befehle aus. Das
+    Repository wird in den aktuellen Ordner geklont.
+  </p>
+  <pre>git clone https://github.com/mariusburkhardt/Dashboard.git
+cd .\Dashboard\Dashboard</pre>
+
+  <h2>3. Installation prüfen und starten</h2>
+  <pre>python --version
+python -m tkinter
+python -m src.main</pre>
+  <p>
+    Der Versionsbefehl muss Python 3.11 oder neuer anzeigen. Der Tkinter-Test
+    öffnet ein kleines Testfenster; schließen Sie es wieder. Der letzte Befehl
+    startet das Studien-Dashboard.
+  </p>
+
+  <h2>Daten und erneuter Start</h2>
+  <p>
+    Beim ersten Start legt die Anwendung in <code>Dashboard\data</code> eine
+    SQLite-Datenbank mit gekennzeichneten Beispieldaten an. Spätere Starts
+    verwenden dieselbe Datei. Die Oberfläche dient aktuell zur Anzeige; eine
+    Bearbeitung von Studiengangsdaten über die GUI ist noch nicht vorgesehen.
+  </p>
+
+  <h2>Tests (optional)</h2>
+  <p>Zum Ausführen der automatisierten Tests installieren Sie pytest:</p>
+  <pre>python -m pip install -r requirements.txt
+python -m pytest -q</pre>
+
+  <p class="note">
+    <strong>Hinweis:</strong> Starten Sie <code>src\main.py</code> nicht mit
+    „Run Code“ als einzelne Datei. Verwenden Sie im Ordner
+    <code>Dashboard</code> den Modulstart <code>python -m src.main</code>;
+    so werden die Paketimporte korrekt aufgelöst.
+  </p>
+
+  <p class="footer">
+    Repository:
+    <a href="https://github.com/mariusburkhardt/Dashboard">
+      https://github.com/mariusburkhardt/Dashboard
+    </a>
+  </p>
+</body>
+</html>
