@@ -1,0 +1,55 @@
+{
+  "name": "Betriebswirtschaftslehre",
+  "target_years": 3,
+  "target_grade": 2.0,
+  "required_ects": 180.0,
+  "semesters": [
+    {
+      "number": 1,
+      "modules": [
+        {
+          "code": "BWL101",
+          "name": "Einführung in die BWL",
+          "ects": 6.0,
+          "completed": true,
+          "assessments": [
+            {
+              "name": "Klausur",
+              "grade": 1.7,
+              "ects": 6.0,
+              "passed": true,
+              "comment": ""
+            }
+          ]
+        },
+        {
+          "code": "BWL102",
+          "name": "Mathematik für Wirtschaftswissenschaftler",
+          "ects": 9.0,
+          "completed": false,
+          "assessments": []
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "modules": [
+        {
+          "code": "BWL201",
+          "name": "Rechnungswesen",
+          "ects": 6.0,
+          "completed": true,
+          "assessments": [
+            {
+              "name": "Klausur",
+              "grade": 2.3,
+              "ects": 6.0,
+              "passed": true,
+              "comment": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
