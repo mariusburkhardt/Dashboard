@@ -1,3 +1,3 @@
 # Dashboard
 
-Stuedien Dashboard
+Studien Dashboard
