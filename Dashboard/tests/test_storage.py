@@ -13,6 +13,7 @@ from src.storage import SQLiteStudyProgramRepository
 
 
 def make_program(name: str = "Cyber Security") -> StudyProgram:
+    """Erstellt einen Studiengang mit einem bestandenen und offenen Modul."""
     return StudyProgram(
         name=name,
         start_date=date(2026, 4, 17),
@@ -37,7 +38,7 @@ def make_program(name: str = "Cyber Security") -> StudyProgram:
     )
 
 
-def test_save_and_load_study_program(tmp_path: Path):
+def test_save_and_load_study_program(tmp_path: Path) -> None:
     repository = SQLiteStudyProgramRepository(
         tmp_path / "data" / "study_dashboard.sqlite3"
     )
@@ -49,7 +50,7 @@ def test_save_and_load_study_program(tmp_path: Path):
     assert loaded == program
 
 
-def test_save_replaces_the_existing_program(tmp_path: Path):
+def test_save_replaces_the_existing_program(tmp_path: Path) -> None:
     repository = SQLiteStudyProgramRepository(
         tmp_path / "study_dashboard.sqlite3"
     )
@@ -67,7 +68,7 @@ def test_save_replaces_the_existing_program(tmp_path: Path):
     ]
 
 
-def test_load_returns_none_without_saved_program(tmp_path: Path):
+def test_load_returns_none_without_saved_program(tmp_path: Path) -> None:
     repository = SQLiteStudyProgramRepository(
         tmp_path / "study_dashboard.sqlite3"
     )

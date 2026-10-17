@@ -12,7 +12,7 @@ from src.models import (
 )
 
 
-def test_passed_assessment_requires_a_valid_grade():
+def test_passed_assessment_requires_a_valid_grade() -> None:
     assessment = Assessment(
         AssessmentType.EXAM,
         AssessmentStatus.PASSED,
@@ -31,14 +31,18 @@ def test_passed_assessment_requires_a_valid_grade():
         (AssessmentStatus.PASSED, None),
         (AssessmentStatus.PASSED, 4.1),
         (AssessmentStatus.PASSED, 0.9),
+        (AssessmentStatus.PASSED, float("nan")),
+        (AssessmentStatus.PASSED, float("inf")),
     ],
 )
-def test_assessment_rejects_invalid_grade_state(status, grade):
+def test_assessment_rejects_invalid_grade_state(
+    status: AssessmentStatus, grade: float | None
+) -> None:
     with pytest.raises(ValueError):
         Assessment(AssessmentType.EXAM, status, grade)
 
 
-def test_module_defaults_to_five_ects_and_an_open_exam():
+def test_module_defaults_to_five_ects_and_an_open_exam() -> None:
     module = Module("Kryptographie")
 
     assert module.ects == 5.0
@@ -46,17 +50,33 @@ def test_module_defaults_to_five_ects_and_an_open_exam():
     assert module.assessment.status is AssessmentStatus.OPEN
 
 
-def test_study_program_calculates_current_semester_from_start_date():
+def test_study_program_calculates_current_semester_from_start_date() -> None:
     program = StudyProgram("Cyber Security", date(2026, 4, 17))
 
     assert program.current_semester(date(2026, 10, 16)) == 1
     assert program.current_semester(date(2026, 10, 17)) == 2
 
 
-def test_semester_rejects_end_date_before_start_date():
-    with pytest.raises(ValueError, match="cannot end before"):
+def test_semester_rejects_end_date_before_start_date() -> None:
+    with pytest.raises(ValueError, match="darf nicht vor dem Start liegen"):
         Semester(
             number=1,
             start_date=date(2026, 10, 1),
             end_date=date(2026, 9, 30),
         )
+
+
+@pytest.mark.parametrize("ects", [0.0, -5.0, float("nan"), float("inf")])
+def test_module_rejects_nonpositive_or_nonfinite_ects(ects: float) -> None:
+    with pytest.raises(ValueError, match="ECTS-Punktzahl"):
+        Module("Kryptographie", ects=ects)
+
+
+@pytest.mark.parametrize(
+    "required_ects", [0.0, -5.0, float("nan"), float("inf")]
+)
+def test_study_program_rejects_nonpositive_or_nonfinite_required_ects(
+    required_ects: float,
+) -> None:
+    with pytest.raises(ValueError, match="erforderliche ECTS-Punktzahl"):
+        StudyProgram("Cyber Security", date(2026, 4, 17), required_ects=required_ects)

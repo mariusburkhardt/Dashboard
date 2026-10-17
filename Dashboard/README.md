@@ -73,10 +73,15 @@ angepasst werden.
 
 ```text
 Dashboard/
-├── data/                 # SQLite-Datenbank (wird beim Start angelegt)
-├── docs/architecture.puml
+├── .gitignore
+├── agents.md
+├── data/                         # SQLite-Datenbank (wird beim Start angelegt)
+├── docs/
+│   └── architecture.puml
+├── requirements.txt
 ├── src/
 │   ├── application.py
+│   ├── __init__.py
 │   ├── controller.py
 │   ├── dashboard.py
 │   ├── dto.py
@@ -87,7 +92,10 @@ Dashboard/
 │   ├── storage.py
 │   └── ui.py
 ├── tests/
-└── requirements.txt
+│   ├── test_dashboard.py
+│   ├── test_models.py
+│   └── test_storage.py
+└── README.md
 ```
 
 ## Starten

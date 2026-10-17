@@ -17,15 +17,16 @@ from .repositories import StudyProgramRepository
 
 
 class SQLiteStudyProgramRepository:
-    """Persist a study program and its modules in a SQLite database."""
+    """Speichert Studiengänge und zugehörige Fachobjekte in SQLite."""
 
     def __init__(self, database_path: Path) -> None:
+        """Legt den Datenbankpfad fest und erstellt das Tabellenschema."""
         self._database_path = database_path
         self._database_path.parent.mkdir(parents=True, exist_ok=True)
         self._create_schema()
 
     def load(self) -> StudyProgram | None:
-        """Load the saved study program and its related objects."""
+        """Lädt den gespeicherten Studiengang samt zugehöriger Objekte."""
         with closing(sqlite3.connect(self._database_path)) as connection:
             connection.row_factory = sqlite3.Row
             connection.execute("PRAGMA foreign_keys = ON")
@@ -71,7 +72,8 @@ class SQLiteStudyProgramRepository:
                     ).fetchone()
                     if assessment_row is None:
                         raise ValueError(
-                            f"Module {module_row['name']!r} has no assessment."
+                            f"Zum Modul {module_row['name']!r} fehlt eine "
+                            "Prüfungsleistung."
                         )
                     modules.append(
                         Module(
@@ -104,7 +106,7 @@ class SQLiteStudyProgramRepository:
             )
 
     def save(self, program: StudyProgram) -> None:
-        """Replace the persisted study program in one transaction."""
+        """Ersetzt den gespeicherten Studiengang in einer Transaktion."""
         with closing(sqlite3.connect(self._database_path)) as connection:
             connection.execute("PRAGMA foreign_keys = ON")
             with connection:
@@ -141,7 +143,9 @@ class SQLiteStudyProgramRepository:
                     )
                     semester_id = semester_cursor.lastrowid
                     if semester_id is None:
-                        raise RuntimeError("SQLite did not return a semester id.")
+                        raise RuntimeError(
+                            "SQLite hat keine Semester-ID zurückgegeben."
+                        )
                     for module in semester.modules:
                         module_cursor = connection.execute(
                             """
@@ -152,7 +156,9 @@ class SQLiteStudyProgramRepository:
                         )
                         module_id = module_cursor.lastrowid
                         if module_id is None:
-                            raise RuntimeError("SQLite did not return a module id.")
+                            raise RuntimeError(
+                                "SQLite hat keine Modul-ID zurückgegeben."
+                            )
                         connection.execute(
                             """
                             INSERT INTO assessments (
@@ -169,7 +175,7 @@ class SQLiteStudyProgramRepository:
                         )
 
     def _create_schema(self) -> None:
-        """Create the SQLite tables if they do not already exist."""
+        """Erstellt die SQLite-Tabellen, falls sie noch nicht vorhanden sind."""
         with closing(sqlite3.connect(self._database_path)) as connection:
             connection.execute("PRAGMA foreign_keys = ON")
             with connection:

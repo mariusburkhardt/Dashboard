@@ -16,6 +16,7 @@ from src.models import (
 
 
 def make_program() -> StudyProgram:
+    """Erstellt einen Studiengang mit bestandenen Beispielmodulen."""
     passed_modules = [
         Module(
             f"Modul {number}",
@@ -43,7 +44,7 @@ def make_program() -> StudyProgram:
     )
 
 
-def test_dashboard_service_calculates_targets_and_average():
+def test_dashboard_service_calculates_targets_and_average() -> None:
     data = DashboardService().build_dashboard_data(
         make_program(), today=date(2026, 10, 17)
     )
@@ -60,15 +61,19 @@ def test_dashboard_service_calculates_targets_and_average():
     assert len(data.modules) == 6
 
 
-def test_controller_reports_missing_saved_program():
+def test_controller_reports_missing_saved_program() -> None:
     class EmptyRepository:
-        def load(self):
+        def load(self) -> StudyProgram | None:
+            """Liefert keinen gespeicherten Studiengang."""
             return None
 
-        def save(self, program):
-            raise AssertionError("save should not be called")
+        def save(self, program: StudyProgram) -> None:
+            """Löst einen Fehler aus, da im Test nichts gespeichert werden soll."""
+            raise AssertionError(
+                "Speichern soll in diesem Test nicht aufgerufen werden."
+            )
 
     controller = DashboardController(DashboardService(), EmptyRepository())
 
-    with pytest.raises(RuntimeError, match="No study program"):
+    with pytest.raises(RuntimeError, match="kein Studiengang"):
         controller.load_dashboard_data()

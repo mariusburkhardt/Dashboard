@@ -12,12 +12,12 @@ from .models import AssessmentStatus, StudyProgram
 
 
 class DashboardService:
-    """Calculate dashboard indicators from the study domain model."""
+    """Berechnet Kennzahlen des Dashboards aus dem Fachmodell."""
 
     def build_dashboard_data(
         self, program: StudyProgram, today: date | None = None
     ) -> DashboardData:
-        """Build the presentation data for a study program."""
+        """Erstellt die aufbereiteten Dashboard-Daten für einen Studiengang."""
         current_semester = program.current_semester(today)
         elapsed_planned_semesters = min(
             current_semester - 1, program.planned_semesters

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
 import tkinter as tk
+from pathlib import Path
 
 from .controller import DashboardController
 from .dashboard import DashboardService
@@ -11,16 +11,17 @@ from .ui import DashboardView
 
 
 class DashboardApplication:
-    """Create and connect the application's architecture layers."""
+    """Erzeugt und verbindet die Architekturkomponenten der Anwendung."""
 
     def __init__(self, database_path: Path | None = None) -> None:
+        """Legt den Speicherort der Datenbank fest."""
         project_root = Path(__file__).resolve().parent.parent
         self._database_path = database_path or (
             project_root / "data" / "study_dashboard.sqlite3"
         )
 
     def start(self) -> None:
-        """Initialize persistence, wire the layers, and start the UI."""
+        """Initialisiert die Datenhaltung und startet die Benutzeroberfläche."""
         repository = SQLiteStudyProgramRepository(self._database_path)
         if repository.load() is None:
             repository.save(create_sample_program())

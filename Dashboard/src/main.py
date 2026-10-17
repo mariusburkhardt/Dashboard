@@ -2,7 +2,7 @@ from .application import DashboardApplication
 
 
 def main() -> None:
-    """Start the study dashboard."""
+    """Startet das Studien-Dashboard."""
     DashboardApplication().start()
 
 

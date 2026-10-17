@@ -8,9 +8,10 @@ from .dto import DashboardData, OverallStatus
 
 
 class DashboardView:
-    """Render dashboard data in a read-only Tkinter window."""
+    """Stellt Dashboard-Daten in einem schreibgeschützten Tkinter-Fenster dar."""
 
     def __init__(self, root: tk.Tk, controller: DashboardController) -> None:
+        """Initialisiert das Fenster und verbindet es mit dem Controller."""
         self._root = root
         self._controller = controller
         self._root.title("Studien-Dashboard")
@@ -18,11 +19,11 @@ class DashboardView:
         self._build_widgets()
 
     def run(self) -> None:
-        """Start the Tkinter event loop."""
+        """Startet die Ereignisschleife von Tkinter."""
         self._root.mainloop()
 
     def _build_widgets(self) -> None:
-        """Create the summary indicators and module overview."""
+        """Erstellt Kennzahlen und Modulübersicht."""
         container = ttk.Frame(self._root, padding=20)
         container.pack(fill=tk.BOTH, expand=True)
 
@@ -103,13 +104,13 @@ class DashboardView:
         self._refresh()
 
     def _refresh(self) -> None:
-        """Load and display the latest dashboard data."""
+        """Lädt und zeigt die aktuellen Dashboard-Daten."""
         data = self._controller.load_dashboard_data()
         self._display_summary(data)
         self._display_modules(data)
 
     def _display_summary(self, data: DashboardData) -> None:
-        """Update the program summary and target indicators."""
+        """Aktualisiert Studiengangszusammenfassung und Zielstatus."""
         colors = {
             OverallStatus.ON_TRACK: "#237a3b",
             OverallStatus.AT_RISK: "#a15c00",
@@ -158,7 +159,7 @@ class DashboardView:
         )
 
     def _display_modules(self, data: DashboardData) -> None:
-        """Replace the table contents with the current module list."""
+        """Ersetzt den Tabelleninhalt durch die aktuelle Modulliste."""
         self._module_table.delete(*self._module_table.get_children())
         for module in data.modules:
             self._module_table.insert(

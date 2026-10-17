@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import date
 from enum import Enum
+from math import isfinite
 
 
 class AssessmentType(Enum):
@@ -30,13 +31,21 @@ class Assessment:
     grade: float | None = None
 
     def __post_init__(self) -> None:
-        """Validate the grade against the assessment status."""
+        """Prüft, ob Note und Prüfungsstatus zusammenpassen."""
         if self.grade is not None and self.status is not AssessmentStatus.PASSED:
-            raise ValueError("A grade can only be set for a passed assessment.")
+            raise ValueError(
+                "Eine Note kann nur bei bestandener Prüfungsleistung "
+                "angegeben werden."
+            )
         if self.status is AssessmentStatus.PASSED and self.grade is None:
-            raise ValueError("A passed assessment must have a grade.")
-        if self.grade is not None and not 1.0 <= self.grade <= 4.0:
-            raise ValueError("A passing grade must be between 1.0 and 4.0.")
+            raise ValueError(
+                "Für eine bestandene Prüfungsleistung muss eine Note "
+                "angegeben werden."
+            )
+        if self.grade is not None and (
+            not isfinite(self.grade) or not 1.0 <= self.grade <= 4.0
+        ):
+            raise ValueError("Eine bestandene Note muss zwischen 1,0 und 4,0 liegen.")
 
 
 @dataclass
@@ -48,11 +57,11 @@ class Module:
     )
 
     def __post_init__(self) -> None:
-        """Validate the module name and its ECTS value."""
+        """Prüft Modulnamen und ECTS-Wert."""
         if not self.name.strip():
-            raise ValueError("A module name cannot be empty.")
-        if self.ects <= 0:
-            raise ValueError("ECTS must be greater than zero.")
+            raise ValueError("Der Modulname darf nicht leer sein.")
+        if not isfinite(self.ects) or self.ects <= 0:
+            raise ValueError("Die ECTS-Punktzahl muss größer als null sein.")
 
 
 @dataclass
@@ -63,11 +72,11 @@ class Semester:
     modules: list[Module] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        """Validate the semester number and date range."""
+        """Prüft Semesternummer und Datumsbereich."""
         if self.number < 1:
-            raise ValueError("A semester number must be positive.")
+            raise ValueError("Die Semesternummer muss positiv sein.")
         if self.end_date < self.start_date:
-            raise ValueError("A semester cannot end before it starts.")
+            raise ValueError("Das Semesterende darf nicht vor dem Start liegen.")
 
 
 @dataclass
@@ -80,18 +89,18 @@ class StudyProgram:
     semesters: list[Semester] = field(default_factory=list)
 
     def __post_init__(self) -> None:
-        """Validate the study program's goals and identifying name."""
+        """Prüft Studiengangsnamen und Zielwerte."""
         if not self.name.strip():
-            raise ValueError("A study program name cannot be empty.")
+            raise ValueError("Der Studiengangsname darf nicht leer sein.")
         if self.planned_semesters < 1:
-            raise ValueError("The planned number of semesters must be positive.")
-        if self.required_ects <= 0:
-            raise ValueError("Required ECTS must be greater than zero.")
+            raise ValueError("Die geplante Semesterzahl muss positiv sein.")
+        if not isfinite(self.required_ects) or self.required_ects <= 0:
+            raise ValueError("Die erforderliche ECTS-Punktzahl muss positiv sein.")
         if not 1.0 <= self.target_grade <= 4.0:
-            raise ValueError("The target grade must be between 1.0 and 4.0.")
+            raise ValueError("Die Zielnote muss zwischen 1,0 und 4,0 liegen.")
 
     def current_semester(self, today: date | None = None) -> int:
-        """Calculate the current six-month semester from the start date."""
+        """Berechnet anhand des Startdatums das aktuelle Sechsmonatssemester."""
         current_date = today or date.today()
         elapsed_months = (
             (current_date.year - self.start_date.year) * 12

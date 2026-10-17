@@ -13,7 +13,7 @@ from .models import (
 
 
 def create_sample_program(today: date | None = None) -> StudyProgram:
-    """Create clearly labelled demonstration data for the first application run."""
+    """Erstellt gekennzeichnete Beispieldaten für den ersten Programmstart."""
     current_date = today or date.today()
     start_date = current_date - timedelta(days=184)
     first_semester_end = start_date + timedelta(days=181)
