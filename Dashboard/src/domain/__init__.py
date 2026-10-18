@@ -1,9 +1,9 @@
 """Fachklassen des Dashboards."""
 
-from .assessment import Assessment, AssessmentStatus, AssessmentType
-from .module import Module
+from .pruefungsleistung import Assessment, AssessmentStatus, AssessmentType
+from .modul import Module
 from .semester import Semester
-from .study_program import StudyProgram
+from .studiengang import StudyProgram
 
 __all__ = [
     "Assessment",

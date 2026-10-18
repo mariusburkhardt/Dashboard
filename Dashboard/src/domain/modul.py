@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from .assessment import Assessment, AssessmentType
+from .pruefungsleistung import Assessment, AssessmentType
 
 @dataclass
 class Module:

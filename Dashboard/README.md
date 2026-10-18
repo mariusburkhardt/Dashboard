@@ -97,10 +97,10 @@ Dashboard/
 │   ├── dashboard.py
 │   ├── domain/
 │   │   ├── __init__.py
-│   │   ├── assessment.py
-│   │   ├── module.py
+│   │   ├── pruefungsleistung.py
+│   │   ├── modul.py
 │   │   ├── semester.py
-│   │   └── study_program.py
+│   │   └── studiengang.py
 │   ├── dto.py
 │   ├── main.py
 │   ├── repositories.py
