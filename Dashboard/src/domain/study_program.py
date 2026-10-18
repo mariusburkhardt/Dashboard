@@ -29,10 +29,7 @@ class StudyProgram:
         if self.planned_semesters < 1:
             raise ValueError("Die geplante Semesterzahl muss positiv sein.")
         if type(self.required_ects) is not int or self.required_ects <= 0:
-            raise ValueError(
-                "Die erforderliche ECTS-Punktzahl muss eine positive "
-                "ganze Zahl sein."
-            )
+            raise ValueError("Die erforderliche ECTS-Punktzahl muss eine positive ganze Zahl sein.")
         if not 1.0 <= self.target_grade <= 4.0:
             raise ValueError("Die Zielnote muss zwischen 1,0 und 4,0 liegen.")
 

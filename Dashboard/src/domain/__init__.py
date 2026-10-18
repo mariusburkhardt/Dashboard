@@ -1,4 +1,4 @@
-"""Fachklassen des Studien-Dashboards."""
+"""Fachklassen des Dashboards."""
 
 from .assessment import Assessment, AssessmentStatus, AssessmentType
 from .module import Module
