@@ -8,7 +8,7 @@ package "Domain" {
         +student_name: str
         +start_date: date
         +planned_semesters: int
-        +required_ects: float
+        +required_ects: int
         +target_grade: float
         +current_semester(today: date | None): int
     }
@@ -21,7 +21,7 @@ package "Domain" {
 
     class "Module\n(module.py)" as Module {
         +name: str
-        +ects: float
+        +ects: int
     }
 
     class "Assessment\n(assessment.py)" as Assessment {

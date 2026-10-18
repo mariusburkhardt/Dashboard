@@ -180,7 +180,7 @@ class SQLiteStudyProgramRepository:
         """Erstellt die SQLite-Tabellen, falls sie noch nicht vorhanden sind."""
         with closing(sqlite3.connect(self._database_path)) as connection:
             connection.row_factory = sqlite3.Row
-            connection.execute("PRAGMA foreign_keys = ON")
+            connection.execute("PRAGMA foreign_keys = OFF")
             with connection:
                 connection.executescript(
                     """
@@ -191,7 +191,10 @@ class SQLiteStudyProgramRepository:
                         planned_semesters INTEGER NOT NULL CHECK (
                             planned_semesters > 0
                         ),
-                        required_ects REAL NOT NULL CHECK (required_ects > 0),
+                        required_ects INTEGER NOT NULL CHECK (
+                            required_ects > 0
+                            AND typeof(required_ects) = 'integer'
+                        ),
                         target_grade REAL NOT NULL CHECK (
                             target_grade BETWEEN 1.0 AND 4.0
                         ),
@@ -211,7 +214,9 @@ class SQLiteStudyProgramRepository:
                         semester_id INTEGER NOT NULL REFERENCES semesters(id)
                             ON DELETE CASCADE,
                         name TEXT NOT NULL,
-                        ects REAL NOT NULL CHECK (ects > 0)
+                        ects INTEGER NOT NULL CHECK (
+                            ects > 0 AND typeof(ects) = 'integer'
+                        )
                     );
                     CREATE TABLE IF NOT EXISTS assessments (
                         id INTEGER PRIMARY KEY,
@@ -258,3 +263,106 @@ class SQLiteStudyProgramRepository:
                         DEFAULT 'Studierende/r'
                         """
                     )
+                self._migrate_ects_columns(connection)
+            connection.execute("PRAGMA foreign_keys = ON")
+
+    @staticmethod
+    def _migrate_ects_columns(connection: sqlite3.Connection) -> None:
+        """Migriert ganzzahlige ECTS-Spalten und erhält bestehende Einträge."""
+        migrations = (
+            (
+                "study_programs",
+                "required_ects",
+                """
+                CREATE TABLE study_programs_integer_migration (
+                    id INTEGER PRIMARY KEY CHECK (id = 1),
+                    name TEXT NOT NULL,
+                    start_date TEXT NOT NULL,
+                    planned_semesters INTEGER NOT NULL CHECK (
+                        planned_semesters > 0
+                    ),
+                    required_ects INTEGER NOT NULL CHECK (
+                        required_ects > 0
+                        AND typeof(required_ects) = 'integer'
+                    ),
+                    target_grade REAL NOT NULL CHECK (
+                        target_grade BETWEEN 1.0 AND 4.0
+                    ),
+                    student_name TEXT NOT NULL DEFAULT 'Studierende/r'
+                )
+                """,
+                """
+                INSERT INTO study_programs_integer_migration (
+                    id, name, start_date, planned_semesters, required_ects,
+                    target_grade, student_name
+                )
+                SELECT id, name, start_date, planned_semesters,
+                       CAST(required_ects AS INTEGER), target_grade,
+                       student_name
+                FROM study_programs
+                """,
+                "study_programs",
+            ),
+            (
+                "modules",
+                "ects",
+                """
+                CREATE TABLE modules_integer_migration (
+                    id INTEGER PRIMARY KEY,
+                    semester_id INTEGER NOT NULL REFERENCES semesters(id)
+                        ON DELETE CASCADE,
+                    name TEXT NOT NULL,
+                    ects INTEGER NOT NULL CHECK (
+                        ects > 0 AND typeof(ects) = 'integer'
+                    )
+                )
+                """,
+                """
+                INSERT INTO modules_integer_migration (
+                    id, semester_id, name, ects
+                )
+                SELECT id, semester_id, name, CAST(ects AS INTEGER)
+                FROM modules
+                """,
+                "modules",
+            ),
+        )
+        pending_migrations = []
+        for table, column, create_sql, copy_sql, _ in migrations:
+            column_types = {
+                row["name"]: row["type"].upper()
+                for row in connection.execute(f"PRAGMA table_info({table})")
+            }
+            if column_types[column] == "INTEGER":
+                continue
+            fractional_values = connection.execute(
+                f"""
+                SELECT COUNT(*) FROM {table}
+                WHERE {column} IS NULL OR {column} <= 0
+                   OR {column} != CAST({column} AS INTEGER)
+                """
+            ).fetchone()[0]
+            if fractional_values:
+                raise ValueError(
+                    f"Die Datenbank enthält ungültige oder gebrochene Werte "
+                    f"für {column}; die ECTS-Migration wurde abgebrochen."
+                )
+            pending_migrations.append(
+                (table, create_sql, copy_sql)
+            )
+
+        if pending_migrations:
+            connection.execute("BEGIN IMMEDIATE")
+            try:
+                for table, create_sql, copy_sql in pending_migrations:
+                    migration_table = f"{table}_integer_migration"
+                    connection.execute(create_sql)
+                    connection.execute(copy_sql)
+                    connection.execute(f"DROP TABLE {table}")
+                    connection.execute(
+                        f"ALTER TABLE {migration_table} RENAME TO {table}"
+                    )
+                connection.commit()
+            except sqlite3.Error:
+                connection.rollback()
+                raise

@@ -61,6 +61,25 @@ def test_import_rejects_unsupported_format_version(tmp_path: Path) -> None:
         import_study_program(path)
 
 
+def test_import_converts_legacy_whole_number_ects_to_integers(
+    tmp_path: Path,
+) -> None:
+    """Übernimmt alte JSON-ECTS als Fließkommazahl, sofern sie ganzzahlig ist."""
+    path = tmp_path / "legacy.json"
+    export_study_program(make_program(), path)
+    path.write_text(
+        path.read_text(encoding="utf-8")
+        .replace('"ects": 5', '"ects": 5.0', 1)
+        .replace('"required_ects": 180', '"required_ects": 180.0', 1),
+        encoding="utf-8",
+    )
+
+    imported = import_study_program(path)
+
+    assert type(imported.required_ects) is int
+    assert type(imported.semesters[0].modules[0].ects) is int
+
+
 def test_import_rejects_invalid_assessment_data(tmp_path: Path) -> None:
     """Lehnt eine bestandene Prüfungsleistung ohne Note beim Import ab."""
     path = tmp_path / "invalid.json"
@@ -70,4 +89,28 @@ def test_import_rejects_invalid_assessment_data(tmp_path: Path) -> None:
     path.write_text(text, encoding="utf-8")
 
     with pytest.raises(ValueError, match="Modul enthält fehlende oder ungültige"):
+        import_study_program(path)
+
+
+@pytest.mark.parametrize(
+    ("old_value", "new_value"),
+    [
+        ('"ects": 5', '"ects": 5.5'),
+        ('"ects": 5', '"ects": true'),
+        ('"required_ects": 180', '"required_ects": 180.5'),
+        ('"required_ects": 180', '"required_ects": true'),
+    ],
+)
+def test_import_rejects_fractional_or_boolean_ects(
+    tmp_path: Path, old_value: str, new_value: str
+) -> None:
+    """Lehnt gebrochene und boolesche ECTS-Werte im JSON-Import ab."""
+    path = tmp_path / "invalid_ects.json"
+    export_study_program(make_program(), path)
+    path.write_text(
+        path.read_text(encoding="utf-8").replace(old_value, new_value, 1),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError):
         import_study_program(path)

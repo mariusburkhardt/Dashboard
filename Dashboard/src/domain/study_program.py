@@ -2,23 +2,24 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import date
-from math import isfinite
 
 from .semester import Semester
 
 
+"""Studiengang mit den Kerndaten, die für die Berechnung der Studienplanung benötigt werden.
+solange die Kerndaten nicht geändert wurden werden Beispieldaten verwendet."""
 @dataclass
 class StudyProgram:
-    """Studiengang mit persönlichen Angaben, Zielwerten und Semestern."""
 
     name: str
     start_date: date
     planned_semesters: int = 6
-    required_ects: float = 180.0
+    required_ects: int = 180
     target_grade: float = 2.0
     student_name: str = "Studierende/r"
     semesters: list[Semester] = field(default_factory=list)
-
+    
+#Prüfung, dass keine Felder leer gelassen werden - die Kerndaten müssen vollständig sein
     def __post_init__(self) -> None:
         """Prüft Studiengangsnamen und Zielwerte."""
         if not self.name.strip():
@@ -27,8 +28,11 @@ class StudyProgram:
             raise ValueError("Der Name der studierenden Person darf nicht leer sein.")
         if self.planned_semesters < 1:
             raise ValueError("Die geplante Semesterzahl muss positiv sein.")
-        if not isfinite(self.required_ects) or self.required_ects <= 0:
-            raise ValueError("Die erforderliche ECTS-Punktzahl muss positiv sein.")
+        if type(self.required_ects) is not int or self.required_ects <= 0:
+            raise ValueError(
+                "Die erforderliche ECTS-Punktzahl muss eine positive "
+                "ganze Zahl sein."
+            )
         if not 1.0 <= self.target_grade <= 4.0:
             raise ValueError("Die Zielnote muss zwischen 1,0 und 4,0 liegen.")
 

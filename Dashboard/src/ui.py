@@ -614,7 +614,7 @@ class DashboardView:
                     name=entries[1].get().strip(),
                     start_date=date.fromisoformat(entries[2].get().strip()),
                     planned_semesters=int(entries[3].get()),
-                    required_ects=float(entries[4].get().replace(",", ".")),
+                    required_ects=int(entries[4].get()),
                     target_grade=float(entries[5].get().replace(",", ".")),
                 )
                 self._controller.save_study_program(updated)
@@ -702,7 +702,7 @@ class DashboardView:
                 grade_text = variables["grade"].get().strip()
                 module = Module(
                     name=variables["name"].get().strip(),
-                    ects=float(variables["ects"].get().replace(",", ".")),
+                    ects=int(variables["ects"].get()),
                     assessment=Assessment(
                         assessment_type=assessment_type,
                         status=status,

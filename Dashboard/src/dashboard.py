@@ -22,11 +22,10 @@ class DashboardService:
         elapsed_planned_semesters = min(
             current_semester - 1, program.planned_semesters
         )
+        ects_due = program.required_ects * elapsed_planned_semesters
         expected_ects = (
-            program.required_ects
-            * elapsed_planned_semesters
-            / program.planned_semesters
-        )
+            ects_due + program.planned_semesters - 1
+        ) // program.planned_semesters
         modules = tuple(
             ModuleDashboardRow(
                 semester_number=semester.number,

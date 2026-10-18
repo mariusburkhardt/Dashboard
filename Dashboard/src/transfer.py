@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from datetime import date
+from math import isfinite
 from pathlib import Path
 from typing import Any
 
@@ -88,7 +89,7 @@ def _study_program_from_data(data: Any) -> StudyProgram:
                 modules.append(
                     Module(
                         name=module_data["name"],
-                        ects=module_data["ects"],
+                        ects=_parse_ects(module_data["ects"], "Modul"),
                         assessment=assessment,
                     )
                 )
@@ -117,7 +118,9 @@ def _study_program_from_data(data: Any) -> StudyProgram:
             student_name=data["student_name"],
             start_date=date.fromisoformat(data["start_date"]),
             planned_semesters=data["planned_semesters"],
-            required_ects=data["required_ects"],
+            required_ects=_parse_ects(
+                data["required_ects"], "Studiengang"
+            ),
             target_grade=data["target_grade"],
             semesters=semesters,
         )
@@ -125,3 +128,19 @@ def _study_program_from_data(data: Any) -> StudyProgram:
         raise ValueError(
             "Die JSON-Datei enthält ungültige oder fehlende Studiengangsdaten."
         ) from error
+
+
+def _parse_ects(value: Any, context: str) -> int:
+    """Validiert ganzzahlige ECTS und unterstützt alte ganzzahlige JSON-Zahlen."""
+    if type(value) is int and value > 0:
+        return value
+    if (
+        type(value) is float
+        and isfinite(value)
+        and value.is_integer()
+        and value > 0
+    ):
+        return int(value)
+    raise ValueError(
+        f"Die ECTS-Punktzahl für {context} muss eine positive ganze Zahl sein."
+    )

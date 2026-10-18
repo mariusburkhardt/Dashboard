@@ -26,7 +26,7 @@ class ModuleDashboardRow:
 
     semester_number: int
     module_name: str
-    ects: float
+    ects: int
     assessment_type: str
     assessment_status: str
     grade: float | None
@@ -41,10 +41,10 @@ class DashboardData:
     current_semester: int
     planned_semesters: int
     remaining_semesters: int
-    required_ects: float
-    completed_ects: float
+    required_ects: int
+    completed_ects: int
     progress_percentage: float
-    expected_ects: float
+    expected_ects: int
     target_grade: float
     average_grade: float | None
     time_status: TargetStatus

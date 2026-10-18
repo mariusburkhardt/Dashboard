@@ -48,7 +48,7 @@ def test_module_defaults_to_five_ects_and_an_open_exam() -> None:
     """Verwendet für ein neues Modul die fachlichen Standardwerte."""
     module = Module("Kryptographie")
 
-    assert module.ects == 5.0
+    assert module.ects == 5
     assert module.assessment.assessment_type is AssessmentType.EXAM
     assert module.assessment.status is AssessmentStatus.OPEN
 
@@ -71,19 +71,19 @@ def test_semester_rejects_end_date_before_start_date() -> None:
         )
 
 
-@pytest.mark.parametrize("ects", [0.0, -5.0, float("nan"), float("inf")])
-def test_module_rejects_nonpositive_or_nonfinite_ects(ects: float) -> None:
-    """Lehnt ungültige oder nicht endliche ECTS-Werte ab."""
+@pytest.mark.parametrize("ects", [0, -5, 5.0, 5.5, True])
+def test_module_rejects_nonpositive_or_noninteger_ects(ects: int | float) -> None:
+    """Lehnt nicht positive oder nicht ganzzahlige ECTS-Werte ab."""
     with pytest.raises(ValueError, match="ECTS-Punktzahl"):
         Module("Kryptographie", ects=ects)
 
 
 @pytest.mark.parametrize(
-    "required_ects", [0.0, -5.0, float("nan"), float("inf")]
+    "required_ects", [0, -5, 180.0, 180.5, True]
 )
-def test_study_program_rejects_nonpositive_or_nonfinite_required_ects(
-    required_ects: float,
+def test_study_program_rejects_nonpositive_or_noninteger_required_ects(
+    required_ects: int | float,
 ) -> None:
-    """Lehnt ungültige oder nicht endliche ECTS-Zielwerte ab."""
+    """Lehnt nicht positive oder nicht ganzzahlige ECTS-Ziele ab."""
     with pytest.raises(ValueError, match="erforderliche ECTS-Punktzahl"):
         StudyProgram("Cyber Security", date(2026, 4, 17), required_ects=required_ects)

@@ -61,7 +61,10 @@ Das UML-Klassendiagramm der Gesamtarchitektur liegt in
 
 - Ein Studiensemester umfasst sechs Monate ab dem Studienstart.
 - Das ECTS-Soll steigt pro abgeschlossenem Plansemester gleichmäßig bis zur
-  Gesamtzahl der erforderlichen ECTS.
+  Gesamtzahl der erforderlichen ECTS. Der jeweilige Sollwert wird auf den
+  nächsten ganzen ECTS-Punkt aufgerundet.
+- Modul-ECTS und die erforderliche Gesamtzahl werden als positive ganze Zahlen
+  gespeichert und eingegeben.
 - Erreichte ECTS zählen nur für bestandene Prüfungsleistungen.
 - Der Notendurchschnitt ist das arithmetische Mittel der bestandenen
   Prüfungsleistungen. Eine bestandene Leistung benötigt eine Note zwischen

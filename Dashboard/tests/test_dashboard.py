@@ -64,6 +64,23 @@ def test_dashboard_service_calculates_targets_and_average() -> None:
     assert len(data.modules) == 6
 
 
+def test_dashboard_rounds_expected_ects_up_to_next_whole_point() -> None:
+    """Rundet ein zeitanteiliges ECTS-Soll auf ganze Punkte auf."""
+    program = StudyProgram(
+        "Cyber Security",
+        date(2026, 4, 17),
+        planned_semesters=6,
+        required_ects=181,
+    )
+
+    data = DashboardService().build_dashboard_data(
+        program, today=date(2026, 10, 17)
+    )
+
+    assert data.expected_ects == 31
+    assert isinstance(data.expected_ects, int)
+
+
 def test_controller_reports_missing_saved_program() -> None:
     """Meldet verständlich, wenn kein Studiengang gespeichert wurde."""
     class EmptyRepository:
