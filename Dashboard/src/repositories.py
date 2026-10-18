@@ -6,6 +6,8 @@ from .models import StudyProgram
 
 
 class StudyProgramRepository(Protocol):
+    """Schnittstelle zum Laden und Speichern von Studiengangsdaten."""
+
     def load(self) -> StudyProgram | None:
         """Lädt den gespeicherten Studiengang, falls vorhanden."""
 

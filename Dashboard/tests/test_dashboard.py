@@ -1,4 +1,5 @@
 from datetime import date
+from pathlib import Path
 
 import pytest
 
@@ -13,6 +14,7 @@ from src.models import (
     Semester,
     StudyProgram,
 )
+from src.storage import SQLiteStudyProgramRepository
 
 
 def make_program() -> StudyProgram:
@@ -45,6 +47,7 @@ def make_program() -> StudyProgram:
 
 
 def test_dashboard_service_calculates_targets_and_average() -> None:
+    """Berechnet ECTS-, Zeit- und Notenziele für einen Studiengang."""
     data = DashboardService().build_dashboard_data(
         make_program(), today=date(2026, 10, 17)
     )
@@ -62,7 +65,10 @@ def test_dashboard_service_calculates_targets_and_average() -> None:
 
 
 def test_controller_reports_missing_saved_program() -> None:
+    """Meldet verständlich, wenn kein Studiengang gespeichert wurde."""
     class EmptyRepository:
+        """Repository-Stub ohne gespeicherte Daten."""
+
         def load(self) -> StudyProgram | None:
             """Liefert keinen gespeicherten Studiengang."""
             return None
@@ -77,3 +83,21 @@ def test_controller_reports_missing_saved_program() -> None:
 
     with pytest.raises(RuntimeError, match="kein Studiengang"):
         controller.load_dashboard_data()
+
+
+def test_controller_adds_module_and_creates_first_semester_if_needed(
+    tmp_path: Path,
+) -> None:
+    """Erstellt das erste Semester bei Bedarf und speichert ein neues Modul."""
+    repository = SQLiteStudyProgramRepository(tmp_path / "dashboard.sqlite3")
+    program = StudyProgram("Cyber Security", date(2026, 1, 31))
+    repository.save(program)
+    controller = DashboardController(DashboardService(), repository)
+
+    controller.add_module(1, Module("Kryptographie"))
+
+    loaded = repository.load()
+    assert loaded is not None
+    assert loaded.semesters[0].start_date == date(2026, 1, 31)
+    assert loaded.semesters[0].end_date == date(2026, 7, 30)
+    assert loaded.semesters[0].modules[0].name == "Kryptographie"

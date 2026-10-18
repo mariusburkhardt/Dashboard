@@ -12,11 +12,16 @@ Schichtenmodell aus Phase 2.
 - stellt Module, Prüfungsarten, Prüfungsstatus und Noten in einer Tkinter-GUI dar
 - speichert einen Studiengang mit Semestern, Modulen und Prüfungsleistungen in
   einer SQLite-Datenbank
+- ermöglicht das Bearbeiten der Kerndaten und das Hinzufügen von Modulen
+- importiert und exportiert vollständige JSON-Sicherungen
 
 Beim ersten Start wird ein ausdrücklich als Beispiel gekennzeichneter
-Cyber-Security-Studiengang angelegt. Das Dashboard ist derzeit eine
-Leseansicht. Der Beispieldatensatz kann über `StudyProgramRepository.save()`
-durch eigene Daten ersetzt werden; die Datenbank liegt unter
+Cyber-Security-Studiengang angelegt. Kerndaten lassen sich über
+**Kerndaten ändern** aktualisieren; Module können im jeweils vorhandenen
+Semester ergänzt werden. Falls noch kein Semester vorhanden ist, wird beim
+ersten Modul das erste Semester ab dem Studienstart angelegt. **Importieren**
+und **Exportieren** verwenden JSON-Sicherungsdateien. Vor dem Import muss das
+Ersetzen der gespeicherten Daten bestätigt werden. Die Datenbank liegt unter
 `data/study_dashboard.sqlite3`.
 
 ## Architektur
@@ -29,7 +34,8 @@ durch eigene Daten ersetzt werden; die Datenbank liegt unter
 | Repository-Implementierung | `storage.py` | SQLite-Schema und persistente Speicherung |
 | DTO | `dto.py` | Typisierte, für die Anzeige vorbereitete Daten |
 | Controller | `controller.py` | Verbindet Repository und Service |
-| View | `ui.py` | Darstellung in Tkinter, ohne Berechnungslogik |
+| Datentransfer | `transfer.py` | Validierter Import und Export vollständiger JSON-Sicherungen |
+| View | `ui.py` | Darstellung und Benutzereingaben in Tkinter |
 | Application | `application.py`, `main.py` | Erzeugt und verbindet die Schichten; Programmeinstieg |
 
 Das UML-Klassendiagramm der Gesamtarchitektur liegt in
@@ -92,11 +98,13 @@ Dashboard/
 │   ├── repositories.py
 │   ├── sample_data.py
 │   ├── storage.py
+│   ├── transfer.py
 │   └── ui.py
 ├── tests/
 │   ├── test_dashboard.py
 │   ├── test_models.py
-│   └── test_storage.py
+│   ├── test_storage.py
+│   └── test_transfer.py
 └── README.md
 ```
 

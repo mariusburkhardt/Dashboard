@@ -40,6 +40,7 @@ def create_sample_program(today: date | None = None) -> StudyProgram:
     return StudyProgram(
         name="Cyber Security B.Sc. (Beispieldaten)",
         start_date=start_date,
+        student_name="Marius Burkhardt",
         semesters=[
             Semester(
                 number=1,

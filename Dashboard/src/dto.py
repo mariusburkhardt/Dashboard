@@ -5,12 +5,16 @@ from enum import Enum
 
 
 class TargetStatus(Enum):
+    """Ergebnis des Vergleichs eines Messwerts mit seinem Ziel."""
+
     ON_TRACK = "Im Ziel"
     BEHIND = "Hinter dem Ziel"
     NO_DATA = "Noch keine Daten"
 
 
 class OverallStatus(Enum):
+    """Zusammengefasster Status des Studienfortschritts."""
+
     ON_TRACK = "Im Plan"
     AT_RISK = "Aufmerksamkeit erforderlich"
     OVERDUE = "Geplante Studiendauer überschritten"
@@ -18,6 +22,8 @@ class OverallStatus(Enum):
 
 @dataclass(frozen=True)
 class ModuleDashboardRow:
+    """Für die Anzeige aufbereitete Daten eines Moduls."""
+
     semester_number: int
     module_name: str
     ects: float
@@ -28,7 +34,10 @@ class ModuleDashboardRow:
 
 @dataclass(frozen=True)
 class DashboardData:
+    """Typisierte Kennzahlen und Modulzeilen für die Dashboard-Ansicht."""
+
     program_name: str
+    student_name: str
     current_semester: int
     planned_semesters: int
     remaining_semesters: int

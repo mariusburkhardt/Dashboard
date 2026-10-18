@@ -33,7 +33,7 @@ class SQLiteStudyProgramRepository:
             program_row = connection.execute(
                 """
                 SELECT name, start_date, planned_semesters, required_ects,
-                       target_grade
+                       target_grade, student_name
                 FROM study_programs
                 WHERE id = 1
                 """
@@ -102,6 +102,7 @@ class SQLiteStudyProgramRepository:
                 planned_semesters=program_row["planned_semesters"],
                 required_ects=program_row["required_ects"],
                 target_grade=program_row["target_grade"],
+                student_name=program_row["student_name"],
                 semesters=semesters,
             )
 
@@ -115,9 +116,9 @@ class SQLiteStudyProgramRepository:
                     """
                     INSERT INTO study_programs (
                         id, name, start_date, planned_semesters,
-                        required_ects, target_grade
+                        required_ects, target_grade, student_name
                     )
-                    VALUES (1, ?, ?, ?, ?, ?)
+                    VALUES (1, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         program.name,
@@ -125,6 +126,7 @@ class SQLiteStudyProgramRepository:
                         program.planned_semesters,
                         program.required_ects,
                         program.target_grade,
+                        program.student_name,
                     ),
                 )
                 for semester in program.semesters:
@@ -177,6 +179,7 @@ class SQLiteStudyProgramRepository:
     def _create_schema(self) -> None:
         """Erstellt die SQLite-Tabellen, falls sie noch nicht vorhanden sind."""
         with closing(sqlite3.connect(self._database_path)) as connection:
+            connection.row_factory = sqlite3.Row
             connection.execute("PRAGMA foreign_keys = ON")
             with connection:
                 connection.executescript(
@@ -191,7 +194,8 @@ class SQLiteStudyProgramRepository:
                         required_ects REAL NOT NULL CHECK (required_ects > 0),
                         target_grade REAL NOT NULL CHECK (
                             target_grade BETWEEN 1.0 AND 4.0
-                        )
+                        ),
+                        student_name TEXT NOT NULL DEFAULT 'Studierende/r'
                     );
                     CREATE TABLE IF NOT EXISTS semesters (
                         id INTEGER PRIMARY KEY,
@@ -240,3 +244,17 @@ class SQLiteStudyProgramRepository:
                     );
                     """
                 )
+                columns = {
+                    row["name"]
+                    for row in connection.execute(
+                        "PRAGMA table_info(study_programs)"
+                    )
+                }
+                if "student_name" not in columns:
+                    connection.execute(
+                        """
+                        ALTER TABLE study_programs
+                        ADD COLUMN student_name TEXT NOT NULL
+                        DEFAULT 'Studierende/r'
+                        """
+                    )

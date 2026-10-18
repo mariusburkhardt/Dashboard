@@ -5,6 +5,7 @@ skinparam classAttributeIconSize 0
 package "Domain" {
     class StudyProgram {
         +name: str
+        +student_name: str
         +start_date: date
         +planned_semesters: int
         +required_ects: float
@@ -76,13 +77,29 @@ package "Persistence" {
     }
 }
 
+package "Data transfer" {
+    class "JSON-Transfer" as JsonTransfer {
+        +export_study_program(program: StudyProgram, path: Path): None
+        +import_study_program(path: Path): StudyProgram
+    }
+}
+
 package "Presentation" {
     class DashboardController {
+        +load_study_program(): StudyProgram
         +load_dashboard_data(today: date | None): DashboardData
+        +save_study_program(program: StudyProgram): None
+        +add_module(semester_number: int, module: Module): None
+        +import_study_program(path: Path): None
+        +export_study_program(path: Path): None
     }
 
     class DashboardView {
         +run(): None
+        -open_core_data_dialog(): None
+        -open_module_dialog(): None
+        -import_data(): None
+        -export_data(): None
     }
 }
 
@@ -104,6 +121,7 @@ DashboardController --> DashboardService
 DashboardController --> StudyProgramRepository
 DashboardView --> DashboardController
 DashboardView ..> DashboardData
+DashboardController ..> JsonTransfer : imports/exports JSON
 DashboardApplication ..> SQLiteStudyProgramRepository : creates
 DashboardApplication ..> DashboardService : creates
 DashboardApplication ..> DashboardController : wires

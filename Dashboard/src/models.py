@@ -7,6 +7,8 @@ from math import isfinite
 
 
 class AssessmentType(Enum):
+    """Mögliche Arten einer Prüfungsleistung."""
+
     EXAM = "Klausur"
     WORKBOOK = "Workbook"
     PORTFOLIO = "Portfolio"
@@ -18,6 +20,8 @@ class AssessmentType(Enum):
 
 
 class AssessmentStatus(Enum):
+    """Bearbeitungsstatus einer Prüfungsleistung."""
+
     OPEN = "Offen"
     IN_PROGRESS = "In Bearbeitung"
     PASSED = "Bestanden"
@@ -26,6 +30,8 @@ class AssessmentStatus(Enum):
 
 @dataclass
 class Assessment:
+    """Prüfungsart, Status und Ergebnis eines Moduls."""
+
     assessment_type: AssessmentType
     status: AssessmentStatus = AssessmentStatus.OPEN
     grade: float | None = None
@@ -50,6 +56,8 @@ class Assessment:
 
 @dataclass
 class Module:
+    """Ein Studienmodul mit ECTS und genau einer Prüfungsleistung."""
+
     name: str
     ects: float = 5.0
     assessment: Assessment = field(
@@ -66,6 +74,8 @@ class Module:
 
 @dataclass
 class Semester:
+    """Studienabschnitt mit Datumsbereich und zugeordneten Modulen."""
+
     number: int
     start_date: date
     end_date: date
@@ -81,17 +91,22 @@ class Semester:
 
 @dataclass
 class StudyProgram:
+    """Studiengang mit persönlichen Angaben, Zielwerten und Semestern."""
+
     name: str
     start_date: date
     planned_semesters: int = 6
     required_ects: float = 180.0
     target_grade: float = 2.0
+    student_name: str = "Studierende/r"
     semesters: list[Semester] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         """Prüft Studiengangsnamen und Zielwerte."""
         if not self.name.strip():
             raise ValueError("Der Studiengangsname darf nicht leer sein.")
+        if not self.student_name.strip():
+            raise ValueError("Der Name der studierenden Person darf nicht leer sein.")
         if self.planned_semesters < 1:
             raise ValueError("Die geplante Semesterzahl muss positiv sein.")
         if not isfinite(self.required_ects) or self.required_ects <= 0:

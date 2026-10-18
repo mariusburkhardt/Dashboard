@@ -83,6 +83,7 @@ class DashboardService:
 
         return DashboardData(
             program_name=program.name,
+            student_name=program.student_name,
             current_semester=current_semester,
             planned_semesters=program.planned_semesters,
             remaining_semesters=max(
