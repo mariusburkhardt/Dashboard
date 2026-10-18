@@ -43,6 +43,7 @@ class DashboardView:
     _COLORS = {
         "navy": "#143B5D",
         "teal": "#168F8A",
+        "petrol": "#1A4D6E", #meine Änderung
         "light_blue": "#E8F2F7",
         "panel": "#F1F6F9",
         "border": "#D7E1E8",
