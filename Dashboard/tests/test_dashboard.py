@@ -6,7 +6,7 @@ import pytest
 from src.controller import DashboardController
 from src.dashboard import DashboardService
 from src.dto import OverallStatus, TargetStatus
-from src.models import (
+from src.domain import (
     Assessment,
     AssessmentStatus,
     AssessmentType,

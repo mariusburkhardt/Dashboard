@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from .models import StudyProgram
+from .domain import StudyProgram
 
 
 class StudyProgramRepository(Protocol):

@@ -28,7 +28,7 @@ Ersetzen der gespeicherten Daten bestätigt werden. Die Datenbank liegt unter
 
 | Schicht | Klasse/Modul | Zuständigkeit |
 | --- | --- | --- |
-| Domain | `models.py` | Studiengang, Semester, Modul, Prüfungsleistung und Prüfungs-Enums |
+| Domainklassen | `src/domain/` | Je eine Datei für Studiengang, Semester, Modul und Prüfungsleistung |
 | Service | `dashboard.py` | ECTS-, Noten-, Zeit- und Zielberechnungen |
 | Repository-Abstraktion | `repositories.py` | Vertrag zum Laden und Speichern eines Studiengangs |
 | Repository-Implementierung | `storage.py` | SQLite-Schema und persistente Speicherung |
@@ -92,9 +92,14 @@ Dashboard/
 │   ├── __init__.py
 │   ├── controller.py
 │   ├── dashboard.py
+│   ├── domain/
+│   │   ├── __init__.py
+│   │   ├── assessment.py
+│   │   ├── module.py
+│   │   ├── semester.py
+│   │   └── study_program.py
 │   ├── dto.py
 │   ├── main.py
-│   ├── models.py
 │   ├── repositories.py
 │   ├── sample_data.py
 │   ├── storage.py
@@ -102,7 +107,7 @@ Dashboard/
 │   └── ui.py
 ├── tests/
 │   ├── test_dashboard.py
-│   ├── test_models.py
+│   ├── test_domain.py
 │   ├── test_storage.py
 │   └── test_transfer.py
 └── README.md

@@ -3,7 +3,7 @@ skinparam packageStyle rectangle
 skinparam classAttributeIconSize 0
 
 package "Domain" {
-    class StudyProgram {
+    class "StudyProgram\n(study_program.py)" as StudyProgram {
         +name: str
         +student_name: str
         +start_date: date
@@ -13,24 +13,24 @@ package "Domain" {
         +current_semester(today: date | None): int
     }
 
-    class Semester {
+    class "Semester\n(semester.py)" as Semester {
         +number: int
         +start_date: date
         +end_date: date
     }
 
-    class Module {
+    class "Module\n(module.py)" as Module {
         +name: str
         +ects: float
     }
 
-    class Assessment {
+    class "Assessment\n(assessment.py)" as Assessment {
         +assessment_type: AssessmentType
         +status: AssessmentStatus
         +grade: float | None
     }
 
-    enum AssessmentType {
+    enum "AssessmentType\n(assessment.py)" as AssessmentType {
         EXAM
         WORKBOOK
         PORTFOLIO
@@ -41,7 +41,7 @@ package "Domain" {
         SEMINAR_PAPER
     }
 
-    enum AssessmentStatus {
+    enum "AssessmentStatus\n(assessment.py)" as AssessmentStatus {
         OPEN
         IN_PROGRESS
         PASSED

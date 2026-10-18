@@ -8,7 +8,7 @@ from .dto import (
     OverallStatus,
     TargetStatus,
 )
-from .models import AssessmentStatus, StudyProgram
+from .domain import AssessmentStatus, StudyProgram
 
 
 class DashboardService:

@@ -5,7 +5,7 @@ from contextlib import closing
 from datetime import date
 from pathlib import Path
 
-from .models import (
+from .domain import (
     Assessment,
     AssessmentStatus,
     AssessmentType,

@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from src.models import (
+from src.domain import (
     Assessment,
     AssessmentStatus,
     AssessmentType,

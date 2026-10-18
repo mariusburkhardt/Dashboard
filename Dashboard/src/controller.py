@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .dashboard import DashboardService
 from .dto import DashboardData
-from .models import Module, Semester, StudyProgram
+from .domain import Module, Semester, StudyProgram
 from .repositories import StudyProgramRepository
 from .transfer import export_study_program, import_study_program
 

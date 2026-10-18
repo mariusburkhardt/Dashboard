@@ -10,7 +10,7 @@ from tkinter import filedialog, messagebox, ttk
 
 from .controller import DashboardController
 from .dto import DashboardData, TargetStatus
-from .models import (
+from .domain import (
     Assessment,
     AssessmentStatus,
     AssessmentType,
