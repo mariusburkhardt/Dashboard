@@ -5,7 +5,6 @@ from pathlib import Path
 
 from .controller import DashboardController
 from .dashboard import DashboardService
-from .sample_data import create_sample_program
 from .storage import SQLiteStudyProgramRepository
 from .ui import DashboardView
 
@@ -23,9 +22,6 @@ class DashboardApplication:
     def start(self) -> None:
         """Initialisiert die Datenhaltung und startet die Benutzeroberfläche."""
         repository = SQLiteStudyProgramRepository(self._database_path)
-        if repository.load() is None:
-            repository.save(create_sample_program())
-
         controller = DashboardController(DashboardService(), repository)
         root = tk.Tk()
         DashboardView(root, controller).run()

@@ -205,9 +205,12 @@ class DashboardView:
             anchor="w",
         )
         self._profile_ects.grid(row=1, column=3, sticky="w", padx=(12, 8))
-        self._button(
+        self._core_data_button = self._button(
             card, "Kerndaten ändern", self._open_core_data_dialog
-        ).grid(row=0, column=4, rowspan=2, padx=(12, 0), sticky="e")
+        )
+        self._core_data_button.grid(
+            row=0, column=4, rowspan=2, padx=(12, 0), sticky="e"
+        )
         self._avatar = avatar
 
     def _build_progress_panel(self, parent: tk.Widget) -> None:
@@ -305,10 +308,17 @@ class DashboardView:
         panel.grid_rowconfigure(1, weight=1)
         panel.grid_columnconfigure(0, weight=1)
 
-        add_button = self._button(
-            panel, "＋  Modul hinzufügen", self._open_module_dialog
+        module_actions = tk.Frame(panel, bg=self._COLORS["panel"])
+        module_actions.grid(row=0, column=0, sticky="e", pady=(0, 8))
+        self._add_module_button = self._button(
+            module_actions, "＋  Modul hinzufügen", self._open_module_dialog
         )
-        add_button.grid(row=0, column=0, sticky="e", pady=(0, 8))
+        self._add_module_button.pack(side=tk.RIGHT)
+        self._edit_module_button = self._button(
+            module_actions, "Modul bearbeiten", self._edit_selected_module
+        )
+        self._edit_module_button.pack(side=tk.RIGHT, padx=(0, 8))
+        self._edit_module_button.configure(state=tk.DISABLED)
 
         table_frame = tk.Frame(
             panel,
@@ -351,6 +361,11 @@ class DashboardView:
             "failed", foreground=self._COLORS["red"]
         )
         self._module_table.grid(row=0, column=0, sticky="nsew")
+        self._module_table.bind(
+            "<<TreeviewSelect>>", self._update_edit_module_button
+        )
+        self._module_table.bind("<Double-1>", self._edit_selected_module)
+        self._module_locations: dict[str, tuple[int, int]] = {}
         scrollbar = ttk.Scrollbar(
             table_frame,
             orient=tk.VERTICAL,
@@ -439,11 +454,40 @@ class DashboardView:
 
     def _refresh(self) -> None:
         """Lädt Studiengang und Kennzahlen und aktualisiert alle Ansichten."""
-        data = self._controller.load_dashboard_data()
         program = self._controller.load_study_program()
+        if program is None:
+            self._display_empty_state()
+            return
+        data = self._controller.load_dashboard_data()
+        self._core_data_button.configure(text="Kerndaten ändern")
+        self._add_module_button.configure(state=tk.NORMAL)
         self._display_profile(program, data)
         self._display_progress(data)
         self._display_modules(data)
+
+    def _display_empty_state(self) -> None:
+        """Zeigt Eingabehinweise, solange noch kein Studiengang angelegt ist."""
+        prompt = "Kerndaten anpassen"
+        self._profile_name.configure(text=prompt)
+        self._profile_program.configure(text=prompt)
+        self._profile_start.configure(text=f"Studienstart   {prompt}")
+        self._profile_plan.configure(text=f"Geplante Semester   {prompt}")
+        self._profile_goal.configure(text=f"Zielnote   {prompt}")
+        self._profile_ects.configure(text=f"Anzahl ECTS   {prompt}")
+        self._avatar.itemconfigure(self._avatar_text_id, text="K")
+        self._core_data_button.configure(text=prompt)
+        self._add_module_button.configure(state=tk.DISABLED)
+        self._edit_module_button.configure(state=tk.DISABLED)
+
+        self._average_grade.configure(text=prompt)
+        self._grade_target.configure(text=prompt)
+        self._time_label.configure(text=prompt)
+        self._ects_label.configure(text=prompt)
+        for badge in (self._grade_badge, self._time_badge, self._ects_badge):
+            badge.configure(text=prompt, bg=self._COLORS["muted"])
+        for bar in (self._time_bar, self._ects_bar):
+            self._set_progress_bar(bar, 0.0, TargetStatus.NO_DATA)
+        self._module_table.delete(*self._module_table.get_children())
 
     def _display_profile(
         self, program: StudyProgram, data: DashboardData
@@ -564,6 +608,8 @@ class DashboardView:
     def _display_modules(self, data: DashboardData) -> None:
         """Füllt die Tabelle mit Modulen, Noten und Prüfungsstatus."""
         self._module_table.delete(*self._module_table.get_children())
+        self._module_locations.clear()
+        module_indexes: dict[int, int] = {}
         for module in data.modules:
             status = self._module_status(module.assessment_status)
             grade = (
@@ -576,12 +622,40 @@ class DashboardView:
                 "In Bearbeitung": "in_progress",
                 "Nicht bestanden": "failed",
             }.get(status, "")
+            module_index = module_indexes.get(module.semester_number, 0)
+            module_indexes[module.semester_number] = module_index + 1
+            item_id = f"{module.semester_number}:{module_index}"
             self._module_table.insert(
                 "",
                 tk.END,
                 values=(module.module_name, f"{module.ects:g}", grade, status),
                 tags=(tag,),
+                iid=item_id,
             )
+            self._module_locations[item_id] = (
+                module.semester_number,
+                module_index,
+            )
+        self._update_edit_module_button()
+
+    def _update_edit_module_button(self, _event: tk.Event | None = None) -> None:
+        """Aktiviert die Bearbeitung nur bei ausgewähltem Modul."""
+        selected = self._module_table.selection()
+        state = (
+            tk.NORMAL
+            if selected and selected[0] in self._module_locations
+            else tk.DISABLED
+        )
+        self._edit_module_button.configure(state=state)
+
+    def _edit_selected_module(self, _event: tk.Event | None = None) -> None:
+        """Öffnet den Bearbeitungsdialog für das ausgewählte Modul."""
+        selected = self._module_table.selection()
+        if not selected:
+            return
+        location = self._module_locations.get(selected[0])
+        if location is not None:
+            self._open_module_dialog(location)
 
     def _module_status(self, raw_status: str) -> str:
         """Übersetzt einen Prüfungsstatus in eine kompakte Anzeige."""
@@ -596,28 +670,60 @@ class DashboardView:
     def _open_core_data_dialog(self) -> None:
         """Öffnet ein Formular zum Ändern der Studiengang-Kerndaten."""
         program = self._controller.load_study_program()
-        fields = [
-            ("Name", program.student_name),
-            ("Studiengang", program.name),
-            ("Studienstart (JJJJ-MM-TT)", program.start_date.isoformat()),
-            ("Geplante Semester", str(program.planned_semesters)),
-            ("Anzahl ECTS", str(program.required_ects)),
-            ("Zielnote", str(program.target_grade)),
-        ]
-        dialog, entries = self._form_dialog("Kerndaten ändern", fields)
+        fields = (
+            [
+                ("Name", program.student_name),
+                ("Studiengang", program.name),
+                ("Studienstart (JJJJ-MM-TT)", program.start_date.isoformat()),
+                ("Geplante Semester", str(program.planned_semesters)),
+                ("Anzahl ECTS", str(program.required_ects)),
+                ("Zielnote", str(program.target_grade)),
+            ]
+            if program is not None
+            else [
+                ("Name", ""),
+                ("Studiengang", ""),
+                ("Studienstart (JJJJ-MM-TT)", ""),
+                ("Geplante Semester", ""),
+                ("Anzahl ECTS", ""),
+                ("Zielnote", ""),
+            ]
+        )
+        dialog_title = (
+            "Kerndaten ändern" if program is not None else "Kerndaten anpassen"
+        )
+        dialog, entries = self._form_dialog(dialog_title, fields)
 
         def save() -> None:
             """Prüft und speichert die geänderten Kerndaten."""
             try:
-                updated = replace(
-                    program,
-                    student_name=entries[0].get().strip(),
-                    name=entries[1].get().strip(),
-                    start_date=date.fromisoformat(entries[2].get().strip()),
-                    planned_semesters=int(entries[3].get()),
-                    required_ects=int(entries[4].get()),
-                    target_grade=float(entries[5].get().replace(",", ".")),
+                student_name = entries[0].get().strip()
+                program_name = entries[1].get().strip()
+                start_date = date.fromisoformat(entries[2].get().strip())
+                planned_semesters = int(entries[3].get())
+                required_ects = int(entries[4].get())
+                target_grade = float(
+                    entries[5].get().replace(",", ".")
                 )
+                if program is None:
+                    updated = StudyProgram(
+                        name=program_name,
+                        start_date=start_date,
+                        planned_semesters=planned_semesters,
+                        required_ects=required_ects,
+                        target_grade=target_grade,
+                        student_name=student_name,
+                    )
+                else:
+                    updated = replace(
+                        program,
+                        student_name=student_name,
+                        name=program_name,
+                        start_date=start_date,
+                        planned_semesters=planned_semesters,
+                        required_ects=required_ects,
+                        target_grade=target_grade,
+                    )
                 self._controller.save_study_program(updated)
             except (OSError, RuntimeError, sqlite3.Error, ValueError) as error:
                 messagebox.showerror(
@@ -629,11 +735,44 @@ class DashboardView:
 
         self._form_buttons(dialog, save)
 
-    def _open_module_dialog(self) -> None:
-        """Öffnet ein Formular zum Anlegen eines Moduls."""
+    def _open_module_dialog(
+        self, module_location: tuple[int, int] | None = None
+    ) -> None:
+        """Öffnet ein Formular zum Anlegen oder Bearbeiten eines Moduls."""
         program = self._controller.load_study_program()
+        if program is None:
+            messagebox.showinfo(
+                "Kerndaten fehlen",
+                "Legen Sie zuerst die Kerndaten des Studiengangs an.",
+                parent=self._root,
+            )
+            return
+        existing_module = None
+        if module_location is not None:
+            semester_number, module_index = module_location
+            semester = next(
+                (
+                    item
+                    for item in program.semesters
+                    if item.number == semester_number
+                ),
+                None,
+            )
+            if semester is None or not 0 <= module_index < len(semester.modules):
+                messagebox.showerror(
+                    "Modul nicht verfügbar",
+                    "Das ausgewählte Modul ist nicht mehr vorhanden.",
+                    parent=self._root,
+                )
+                self._refresh()
+                return
+            existing_module = semester.modules[module_index]
         dialog = tk.Toplevel(self._root)
-        dialog.title("Modul hinzufügen")
+        dialog.title(
+            "Modul bearbeiten"
+            if existing_module is not None
+            else "Modul hinzufügen"
+        )
         dialog.configure(bg=self._COLORS["white"])
         dialog.transient(self._root)
         dialog.grab_set()
@@ -670,21 +809,70 @@ class DashboardView:
                 widget = ttk.Entry(form, textvariable=variable, width=33)
             widget.grid(row=row, column=1, sticky="ew", pady=6)
 
-        semester_numbers = tuple(
-            str(semester.number) for semester in program.semesters
-        ) or ("1",)
+        semester_numbers = (
+            (str(module_location[0]),)
+            if module_location is not None
+            else tuple(str(semester.number) for semester in program.semesters)
+            or ("1",)
+        )
         assessment_types = tuple(
             assessment_type.value for assessment_type in AssessmentType
         )
         statuses = tuple(status.value for status in AssessmentStatus)
-        add_field(0, "name", "Modulname")
-        add_field(1, "semester", "Semester", semester_numbers[0], semester_numbers)
-        add_field(2, "ects", "ECTS", "5")
         add_field(
-            3, "assessment_type", "Prüfungsart", assessment_types[0], assessment_types
+            0,
+            "name",
+            "Modulname",
+            existing_module.name if existing_module is not None else "",
         )
-        add_field(4, "status", "Status", statuses[0], statuses)
-        add_field(5, "grade", "Note (nur bei bestanden)")
+        add_field(
+            1,
+            "semester",
+            "Semester",
+            str(module_location[0])
+            if module_location is not None
+            else semester_numbers[0],
+            semester_numbers,
+        )
+        add_field(
+            2,
+            "ects",
+            "ECTS",
+            str(existing_module.ects) if existing_module is not None else "5",
+        )
+        add_field(
+            3,
+            "assessment_type",
+            "Prüfungsart",
+            (
+                existing_module.assessment.assessment_type.value
+                if existing_module is not None
+                else assessment_types[0]
+            ),
+            assessment_types,
+        )
+        add_field(
+            4,
+            "status",
+            "Status",
+            (
+                existing_module.assessment.status.value
+                if existing_module is not None
+                else statuses[0]
+            ),
+            statuses,
+        )
+        add_field(
+            5,
+            "grade",
+            "Note (nur bei bestanden)",
+            (
+                str(existing_module.assessment.grade).replace(".", ",")
+                if existing_module is not None
+                and existing_module.assessment.grade is not None
+                else ""
+            ),
+        )
         form.grid_columnconfigure(1, weight=1)
 
         def save() -> None:
@@ -714,9 +902,14 @@ class DashboardView:
                         ),
                     ),
                 )
-                self._controller.add_module(
-                    int(variables["semester"].get()), module
-                )
+                if module_location is not None:
+                    self._controller.update_module(
+                        module_location[0], module_location[1], module
+                    )
+                else:
+                    self._controller.add_module(
+                        int(variables["semester"].get()), module
+                    )
             except (
                 OSError,
                 RuntimeError,
@@ -782,10 +975,17 @@ class DashboardView:
         )
         if not filename:
             return
-        if not messagebox.askyesno(
-            "Daten ersetzen?",
+        program_exists = self._controller.load_study_program() is not None
+        confirmation = (
             "Beim Import werden die aktuell gespeicherten "
-            "Studiengangsdaten ersetzt.",
+            "Studiengangsdaten ersetzt."
+            if program_exists
+            else "Die Studiengangsdaten aus der JSON-Datei werden in der "
+            "leeren Datenbank gespeichert."
+        )
+        if not messagebox.askyesno(
+            "Daten ersetzen?" if program_exists else "Daten importieren?",
+            confirmation,
             parent=self._root,
         ):
             return

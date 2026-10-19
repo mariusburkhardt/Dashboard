@@ -32,14 +32,9 @@ class DashboardController:
             )
         return self._dashboard_service.build_dashboard_data(program, today)
 
-    def load_study_program(self) -> StudyProgram:
-        """Liefert den gespeicherten Studiengang für ein Bearbeitungsformular."""
-        program = self._study_program_repository.load()
-        if program is None:
-            raise RuntimeError(
-                "In der Datenbank ist kein Studiengang gespeichert."
-            )
-        return program
+    def load_study_program(self) -> StudyProgram | None:
+        """Liefert den gespeicherten Studiengang, falls bereits einer existiert."""
+        return self._study_program_repository.load()
 
     def save_study_program(self, program: StudyProgram) -> None:
         """Speichert Änderungen an den Kerndaten des Studiengangs."""
@@ -48,6 +43,10 @@ class DashboardController:
     def add_module(self, semester_number: int, module: Module) -> None:
         """Fügt einem vorhandenen Semester ein validiertes Modul hinzu."""
         program = self.load_study_program()
+        if program is None:
+            raise RuntimeError(
+                "Bitte legen Sie zuerst die Kerndaten des Studiengangs an."
+            )
         semester = next(
             (
                 item
@@ -83,10 +82,39 @@ class DashboardController:
         semester.modules.append(module)
         self._study_program_repository.save(program)
 
+    def update_module(
+        self, semester_number: int, module_index: int, module: Module
+    ) -> None:
+        """Ersetzt ein Modul anhand seiner Semester- und Listenposition."""
+        program = self.load_study_program()
+        if program is None:
+            raise RuntimeError(
+                "Bitte legen Sie zuerst die Kerndaten des Studiengangs an."
+            )
+        semester = next(
+            (
+                item
+                for item in program.semesters
+                if item.number == semester_number
+            ),
+            None,
+        )
+        if semester is None:
+            raise ValueError(f"Das Semester {semester_number} ist nicht vorhanden.")
+        if not 0 <= module_index < len(semester.modules):
+            raise ValueError("Das ausgewählte Modul ist nicht mehr vorhanden.")
+        semester.modules[module_index] = module
+        self._study_program_repository.save(program)
+
     def import_study_program(self, path: Path) -> None:
         """Importiert einen Studiengang aus JSON und ersetzt den gespeicherten."""
         self._study_program_repository.save(import_study_program(path))
 
     def export_study_program(self, path: Path) -> None:
         """Exportiert den gespeicherten Studiengang als JSON."""
-        export_study_program(self.load_study_program(), path)
+        program = self.load_study_program()
+        if program is None:
+            raise RuntimeError(
+                "In der Datenbank ist kein Studiengang zum Exportieren."
+            )
+        export_study_program(program, path)

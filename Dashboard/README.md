@@ -12,17 +12,22 @@ Schichtenmodell aus Phase 2.
 - stellt Module, Prüfungsarten, Prüfungsstatus und Noten in einer Tkinter-GUI dar
 - speichert einen Studiengang mit Semestern, Modulen und Prüfungsleistungen in
   einer SQLite-Datenbank
-- ermöglicht das Bearbeiten der Kerndaten und das Hinzufügen von Modulen
+- ermöglicht das Bearbeiten der Kerndaten sowie das Hinzufügen und Bearbeiten
+  von Modulen einschließlich Prüfungsstatus und Note
 - importiert und exportiert vollständige JSON-Sicherungen
 
-Beim ersten Start wird ein ausdrücklich als Beispiel gekennzeichneter
-Cyber-Security-Studiengang angelegt. Kerndaten lassen sich über
-**Kerndaten ändern** aktualisieren; Module können im jeweils vorhandenen
+Beim ersten Start wird eine leere Datenbank angelegt. Solange noch kein
+Studiengang gespeichert ist, zeigen die Kerndaten den Hinweis
+**Kerndaten anpassen**; über die gleichnamige Schaltfläche lassen sich die
+erforderlichen Angaben erfassen. Module können im jeweils vorhandenen
 Semester ergänzt werden. Falls noch kein Semester vorhanden ist, wird beim
 ersten Modul das erste Semester ab dem Studienstart angelegt. **Importieren**
 und **Exportieren** verwenden JSON-Sicherungsdateien. Vor dem Import muss das
 Ersetzen der gespeicherten Daten bestätigt werden. Die Datenbank liegt unter
 `data/study_dashboard.sqlite3`.
+Zum Ausprobieren kann die Datei
+[`examples/beispielstudiengang.json`](examples/beispielstudiengang.json) über
+**Importieren** geladen werden.
 
 ## Architektur
 
@@ -89,6 +94,8 @@ Dashboard/
 │   ├── Installationsanleitung.html
 │   ├── Installationsanleitung.pdf
 │   └── architecture.puml
+├── examples/
+│   └── beispielstudiengang.json
 ├── requirements.txt
 ├── src/
 │   ├── application.py
@@ -104,7 +111,6 @@ Dashboard/
 │   ├── dto.py
 │   ├── main.py
 │   ├── repositories.py
-│   ├── sample_data.py
 │   ├── storage.py
 │   ├── transfer.py
 │   └── ui.py

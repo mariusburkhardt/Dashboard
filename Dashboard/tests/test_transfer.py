@@ -61,6 +61,23 @@ def test_import_rejects_unsupported_format_version(tmp_path: Path) -> None:
         import_study_program(path)
 
 
+def test_example_study_program_can_be_imported() -> None:
+    """Lädt den mitgelieferten Beispieldatensatz über den regulären JSON-Import."""
+    example_path = (
+        Path(__file__).parents[1]
+        / "examples"
+        / "beispielstudiengang.json"
+    )
+
+    program = import_study_program(example_path)
+
+    assert program.name == "Cyber Security B.Sc. (Beispiel)"
+    assert program.student_name == "Beispielperson"
+    assert program.required_ects == 180
+    assert len(program.semesters) == 2
+    assert sum(len(semester.modules) for semester in program.semesters) == 8
+
+
 def test_import_converts_legacy_whole_number_ects_to_integers(
     tmp_path: Path,
 ) -> None:

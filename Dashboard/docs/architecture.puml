@@ -90,6 +90,7 @@ package "Presentation" {
         +load_dashboard_data(today: date | None): DashboardData
         +save_study_program(program: StudyProgram): None
         +add_module(semester_number: int, module: Module): None
+        +update_module(semester_number: int, module_index: int, module: Module): None
         +import_study_program(path: Path): None
         +export_study_program(path: Path): None
     }
@@ -98,6 +99,7 @@ package "Presentation" {
         +run(): None
         -open_core_data_dialog(): None
         -open_module_dialog(): None
+        -edit_selected_module(): None
         -import_data(): None
         -export_data(): None
     }
