@@ -44,16 +44,16 @@ class DashboardView:
         "navy": "#143B5D",
         "steel_blue": "#31859C",
         "light_blue": "#E8F2F7",
-        "panel": "#215968", #   "#F1F6F9"
+        "panel": "#215968",
         "border": "#5D5E5F",
-        "text": "#D9D9D9",      #vorher #213547
+        "text": "#D9D9D9",
         "muted": "#62798A",
         "green": "#2C9B73",
         "amber": "#D18B25",
         "red": "#C34D4D",
         "white": "#FFFFFF",
         "fields": "#B7DEE8",
-        "dark_text": "#313131"
+        "dark_text": "#313131",
     }
 
     def __init__(self, root: tk.Tk, controller: DashboardController) -> None:
@@ -425,7 +425,6 @@ class DashboardView:
         return tk.Label(
             parent,
             text="",
-            #bg=self._COLORS["white"], 
             fg=self._COLORS["text"],
             padx=12,
             pady=8,
