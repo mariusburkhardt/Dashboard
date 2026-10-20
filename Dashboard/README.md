@@ -6,10 +6,11 @@ Schichtenmodell aus Phase 2.
 
 ## Funktionen
 
-- zeigt aktuelles und geplantes Semester sowie verbleibende Semester
+- zeigt aktuelles, geplantes und verbleibendes Semester sowie den Gesamtstatus
 - berechnet bestandene ECTS, den ECTS-Fortschritt und den Notendurchschnitt
 - vergleicht ECTS-Fortschritt und Notendurchschnitt mit den gesetzten Zielen
-- stellt Module, Prüfungsarten, Prüfungsstatus und Noten in einer Tkinter-GUI dar
+- zeigt Module, ECTS, Noten und farbige Prüfungsstatus in der Übersicht; im
+  Moduldialog lassen sich Prüfungsart und Status auswählen
 - speichert einen Studiengang mit Semestern, Modulen und Prüfungsleistungen in
   einer SQLite-Datenbank
 - ermöglicht das Bearbeiten der Kerndaten sowie das Hinzufügen und Bearbeiten
@@ -45,12 +46,19 @@ Zum Ausprobieren kann die Datei
 
 Das UML-Klassendiagramm der Gesamtarchitektur liegt in
 [`docs/architecture.puml`](docs/architecture.puml).
+Die View spricht den Controller an. Dieser koordiniert Dashboard-Service,
+Repository und JSON-Transfer. Nur die Application kennt die konkrete SQLite-
+Implementierung und verdrahtet die Komponenten.
+Das Diagramm zeigt die technische Gesamtarchitektur der Umsetzung. Es ergänzt
+das sprachunabhängige Entity-Modell aus Phase 1 um Service, Controller,
+Repository, DTOs, Oberfläche und Programmeinstieg.
 
 ### OOP- und Modellierungsentscheidungen
 
 - `StudyProgram`, `Semester`, `Module` und `Assessment` sind `dataclass`-
-  Fachklassen. Ihre Beziehung ist bewusst als Studiengang-Aggregation und
-  Semester-/Modul-Komposition modelliert.
+  Fachklassen. Ein Studiengang besitzt seine Semester, ein Semester seine
+  Module und ein Modul genau eine Prüfungsleistung. Die SQLite-Fremdschlüssel
+  bilden diese Kompositionen mit Löschweitergabe ab.
 - Ein Modul besitzt genau eine Prüfungsleistung. `AssessmentStatus` und
   `AssessmentType` sind Enums; eine bestandene Prüfung muss eine gültige Note
   haben. Getter/Setter sind für die einfachen Datenträger nicht erforderlich.
@@ -60,7 +68,8 @@ Das UML-Klassendiagramm der Gesamtarchitektur liegt in
 - Mehrere Fachobjekte betreffende Berechnungen liegen im `DashboardService`.
   Der `DashboardController` hängt vom Repository-Protokoll und nicht von der
   SQLite-Implementierung ab. Damit kann die Speicherung ausgetauscht und der
-  Controller mit einem Test-Repository geprüft werden.
+  Controller mit einem Test-Repository geprüft werden. Der JSON-Transfer ist
+  als Funktionsmodul umgesetzt, nicht als zusätzliche Fachklasse.
 
 ### Berechnungs- und Ampellogik
 
@@ -78,7 +87,10 @@ Das UML-Klassendiagramm der Gesamtarchitektur liegt in
   geplante Studiendauer nicht überschritten ist. Ein verfehltes Leistungsziel
   oder ein noch nicht vorhandener Notendurchschnitt führt zu
   **Aufmerksamkeit erforderlich**. Nach Überschreiten der geplanten Dauer
-  lautet der Status **Geplante Studiendauer überschritten**.
+  lautet der Status **Geplante Studiendauer überschritten**. Dieser
+  Gesamtstatus wird als einzige Text-Ampel für Zeit und ECTS angezeigt. Die
+  farbigen Fortschrittsbalken zeigen weiterhin deren jeweiligen Fortschritt;
+  ein separates Statusfeld pro Kennzahl gibt es nicht.
 
 Diese Schwellen sind explizite Prototypregeln und können bei Bedarf fachlich
 angepasst werden.
