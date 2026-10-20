@@ -78,18 +78,17 @@ class DashboardView:
         style.configure(
             "Dashboard.Treeview.Heading",
             background=self._COLORS["steel_blue"],
-            foreground=self._COLORS["white"],
             font=("Segoe UI", 9, "bold"),
             padding=(8, 10),
         )
         style.map(
             "Dashboard.Treeview",
             background=[("selected", self._COLORS["steel_blue"])], 
-            foreground=[("selected", self._COLORS["text"])],
+            foreground=[("selected", self._COLORS["black"])],
         )
 
     def _build_widgets(self) -> None:
-        self._root.configure(bg=self._COLORS["white"]) 
+        self._root.configure(bg=self._COLORS["steel_blue"]) 
         self._root.grid_columnconfigure(0, weight=1)
         self._root.grid_rowconfigure(1, weight=1)
 
@@ -735,10 +734,10 @@ class DashboardView:
             if existing_module is not None
             else "Modul hinzufügen"
         )
-        dialog.configure(bg=self._COLORS["white"])
+        dialog.configure(bg=self._COLORS["steel_blue"])
         dialog.transient(self._root)
         dialog.grab_set()
-        form = tk.Frame(dialog, bg=self._COLORS["white"], padx=20, pady=16)
+        form = tk.Frame(dialog, bg=self._COLORS["steel_blue"], padx=20, pady=16)
         form.pack(fill=tk.BOTH, expand=True)
         variables: dict[str, tk.StringVar] = {}
 
@@ -752,8 +751,8 @@ class DashboardView:
             tk.Label(
                 form,
                 text=label,
-                bg=self._COLORS["white"],
-                fg=self._COLORS["text"],
+                bg=self._COLORS["steel_blue"],
+                fg=self._COLORS["black"],
                 font=("Segoe UI", 10),
             ).grid(row=row, column=0, sticky="w", padx=(0, 12), pady=6)
             variable = tk.StringVar(value=value)
@@ -891,18 +890,18 @@ class DashboardView:
     ) -> tuple[tk.Toplevel, list[ttk.Entry]]:
         dialog = tk.Toplevel(self._root)
         dialog.title(title)
-        dialog.configure(bg=self._COLORS["white"])
+        dialog.configure(bg=self._COLORS["steel_blue"])
         dialog.transient(self._root)
         dialog.grab_set()
-        form = tk.Frame(dialog, bg=self._COLORS["white"], padx=20, pady=16)
+        form = tk.Frame(dialog, bg=self._COLORS["steel_blue"], padx=20, pady=16)
         form.pack(fill=tk.BOTH, expand=True)
         entries = []
         for row, (label, value) in enumerate(fields):
             tk.Label(
                 form,
                 text=label,
-                bg=self._COLORS["white"],
-                fg=self._COLORS["text"],
+                bg=self._COLORS["steel_blue"],
+                fg=self._COLORS["black"],
                 font=("Segoe UI", 10),
             ).grid(row=row, column=0, sticky="w", padx=(0, 12), pady=6)
             entry = ttk.Entry(form, width=34)
@@ -915,7 +914,7 @@ class DashboardView:
     def _form_buttons(
         self, dialog: tk.Toplevel, save: Callable[[], None]
     ) -> None:
-        actions = tk.Frame(dialog, bg=self._COLORS["white"], padx=20, pady=12)
+        actions = tk.Frame(dialog, bg=self._COLORS["steel_blue"], padx=20, pady=12)
         actions.pack(fill=tk.X)
         self._button(actions, "Abbrechen", dialog.destroy).pack(side=tk.RIGHT)
         self._button(actions, "Speichern", save).pack(
