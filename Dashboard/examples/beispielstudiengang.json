@@ -1,79 +1,100 @@
 {
   "format_version": 1,
-  "name": "Cyber Security B.Sc. (Beispiel)",
-  "student_name": "Beispielperson",
-  "start_date": "2026-04-17",
-  "planned_semesters": 6,
+  "name": "Cyber Security B.Sc",
+  "student_name": "Marius Burkhardt",
+  "start_date": "2024-08-01",
+  "planned_semesters": 8,
   "required_ects": 180,
   "target_grade": 2.0,
   "semesters": [
     {
       "number": 1,
-      "start_date": "2026-04-17",
-      "end_date": "2026-10-16",
+      "start_date": "2024-08-01",
+      "end_date": "2025-01-31",
       "modules": [
         {
-          "name": "Einführung in die IT-Sicherheit",
+          "name": "Betriebssysteme, Rechnernetze und verteilte Systeme",
           "ects": 5,
           "assessment_type": "EXAM",
           "assessment_status": "PASSED",
-          "grade": 1.7
+          "grade": 2.0
         },
         {
-          "name": "Grundlagen der Informatik",
+          "name": "Einführung in Datenschutz und IT-Sicherheit",
+          "ects": 5,
+          "assessment_type": "EXAM",
+          "assessment_status": "PASSED",
+          "grade": 2.0
+        },
+        {
+          "name": "Einführung in die Programmierung mit Python",
+          "ects": 5,
+          "assessment_type": "EXAM",
+          "assessment_status": "PASSED",
+          "grade": 2.0
+        },
+        {
+          "name": "Einführung in das wissenschaftliche Arbeiten für IT und Technik",
           "ects": 5,
           "assessment_type": "WORKBOOK",
           "assessment_status": "PASSED",
           "grade": 2.0
         },
         {
-          "name": "Mathematik für Informatik",
-          "ects": 5,
-          "assessment_type": "EXAM",
-          "assessment_status": "PASSED",
-          "grade": 2.3
-        },
-        {
-          "name": "Betriebssysteme",
+          "name": "Projekt: Objektorientierte und funktionale Programmierung mit Python",
           "ects": 5,
           "assessment_type": "PORTFOLIO",
-          "assessment_status": "PASSED",
-          "grade": 1.7
+          "assessment_status": "IN_PROGRESS",
+          "grade": null
         },
         {
-          "name": "Netzwerktechnik",
+          "name": "Interkulturelle und ethische Handlungskompetenzen",
+          "ects": 5,
+          "assessment_type": "CASE_STUDY",
+          "assessment_status": "PASSED",
+          "grade": 2.0
+        },
+        {
+          "name": "Einführung in die Netzwerkforensik",
           "ects": 5,
           "assessment_type": "EXAM",
           "assessment_status": "PASSED",
           "grade": 2.0
         },
         {
-          "name": "Programmierung mit Python",
-          "ects": 5,
-          "assessment_type": "PROJECT_REPORT",
-          "assessment_status": "PASSED",
-          "grade": 1.3
-        }
-      ]
-    },
-    {
-      "number": 2,
-      "start_date": "2026-10-17",
-      "end_date": "2027-04-16",
-      "modules": [
-        {
-          "name": "Kryptographie",
+          "name": "Mathematik Grundlagen I",
           "ects": 5,
           "assessment_type": "EXAM",
+          "assessment_status": "OPEN",
+          "grade": null
+        },
+        {
+          "name": "Statistik - Wahrscheinlichkeit und deskriptive Statistik",
+          "ects": 5,
+          "assessment_type": "EXAM",
+          "assessment_status": "OPEN",
+          "grade": null
+        },
+        {
+          "name": "Requirements Engineering",
+          "ects": 5,
+          "assessment_type": "EXAM",
+          "assessment_status": "PASSED",
+          "grade": 2.0
+        },
+        {
+          "name": "Projekt: Agiles Projektmanagement",
+          "ects": 5,
+          "assessment_type": "PROJECT_REPORT",
           "assessment_status": "IN_PROGRESS",
           "grade": null
         },
         {
-          "name": "IT-Recht",
+          "name": "Grundzüge des System-Pentestings",
           "ects": 5,
-          "assessment_type": "TERM_PAPER",
-          "assessment_status": "OPEN",
-          "grade": null
+          "assessment_type": "EXAM",
+          "assessment_status": "PASSED",
+          "grade": 2.0
         }
       ]
     }
