@@ -46,6 +46,8 @@ Zum Ausprobieren kann die Datei
 
 Das UML-Klassendiagramm der Gesamtarchitektur liegt in
 [`docs/architecture.puml`](docs/architecture.puml).
+Eine bearbeitbare draw.io-Version liegt unter
+[`docs/architecture.drawio`](docs/architecture.drawio).
 Die View spricht den Controller an. Dieser koordiniert Dashboard-Service,
 Repository und JSON-Transfer. Nur die Application kennt die konkrete SQLite-
 Implementierung und verdrahtet die Komponenten.
