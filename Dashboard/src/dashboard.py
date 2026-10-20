@@ -85,14 +85,10 @@ class DashboardService:
             student_name=program.student_name,
             current_semester=current_semester,
             planned_semesters=program.planned_semesters,
-            remaining_semesters=max(
-                0, program.planned_semesters - current_semester
-            ),
+            remaining_semesters=max(0, program.planned_semesters - current_semester),
             required_ects=program.required_ects,
             completed_ects=completed_ects,
-            progress_percentage=min(
-                100.0, completed_ects / program.required_ects * 100
-            ),
+            progress_percentage=min(100.0, completed_ects / program.required_ects * 100),
             expected_ects=expected_ects,
             target_grade=program.target_grade,
             average_grade=average_grade,

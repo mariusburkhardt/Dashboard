@@ -42,17 +42,19 @@ class DashboardView:
 
     _COLORS = {
         "navy": "#143B5D",
-        "teal": "#168F8A",
-        "petrol": "#1A4D6E", #meine Änderung
+        "teal": "#215968",
+        "steel_blue": "#31859C",
         "light_blue": "#E8F2F7",
-        "panel": "#F1F6F9",
-        "border": "#D7E1E8",
-        "text": "#213547",
+        "panel": "#215968", #   "#F1F6F9"
+        "border": "#5D5E5F",
+        "text": "#D9D9D9",      #vorher #213547
         "muted": "#62798A",
         "green": "#2C9B73",
         "amber": "#D18B25",
         "red": "#C34D4D",
         "white": "#FFFFFF",
+        "fields": "#B7DEE8",
+        "dark_text": "#313131"
     }
 
     def __init__(self, root: tk.Tk, controller: DashboardController) -> None:
@@ -76,9 +78,9 @@ class DashboardView:
         style.theme_use("clam")
         style.configure(
             "Dashboard.Treeview",
-            background=self._COLORS["white"],
-            fieldbackground=self._COLORS["white"],
-            foreground=self._COLORS["text"],
+            background=self._COLORS["fields"],
+            fieldbackground=self._COLORS["fields"],
+            foreground=self._COLORS["dark_text"],
             rowheight=36,
             borderwidth=0,
             font=("Segoe UI", 10),
@@ -92,30 +94,30 @@ class DashboardView:
         )
         style.map(
             "Dashboard.Treeview",
-            background=[("selected", "#D5E9F2")],
+            background=[("selected", "#D5E9F2")], 
             foreground=[("selected", self._COLORS["text"])],
         )
 
     def _build_widgets(self) -> None:
         """Erstellt Kopfbereich, Fortschrittskarten, Tabelle und Aktionen."""
-        self._root.configure(bg=self._COLORS["white"])
+        self._root.configure(bg=self._COLORS["white"]) 
         self._root.grid_columnconfigure(0, weight=1)
         self._root.grid_rowconfigure(1, weight=1)
 
-        header = tk.Frame(self._root, bg=self._COLORS["white"], padx=22, pady=14)
+        header = tk.Frame(self._root, bg=self._COLORS["steel_blue"], padx=22, pady=14)
         header.grid(row=0, column=0, sticky="ew")
         header.grid_columnconfigure(1, weight=1)
         tk.Label(
             header,
             text="Studienfortschritt-Dashboard",
-            bg=self._COLORS["white"],
-            fg=self._COLORS["navy"],
+            bg=self._COLORS["steel_blue"],
+            fg=self._COLORS["text"],
             font=("Segoe UI", 20, "bold"),
         ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 12))
         self._build_profile_card(header)
 
         content = tk.Frame(
-            self._root, bg=self._COLORS["white"], padx=22, pady=12
+            self._root, bg=self._COLORS["steel_blue"], padx=22, pady=12
         )
         content.grid(row=1, column=0, sticky="nsew")
         content.grid_rowconfigure(0, weight=1)
@@ -146,13 +148,13 @@ class DashboardView:
             highlightthickness=0,
         )
         avatar.create_oval(
-            3, 3, 55, 55, fill=self._COLORS["teal"], outline=""
+            3, 3, 55, 55, fill=self._COLORS["steel_blue"], outline=""
         )
         self._avatar_text_id = avatar.create_text(
             29,
             29,
             text="",
-            fill=self._COLORS["white"],
+            fill=self._COLORS["text"],
             font=("Segoe UI", 17, "bold"),
         )
         avatar.grid(row=0, column=0, rowspan=2, padx=(0, 14))
@@ -160,15 +162,15 @@ class DashboardView:
         self._profile_name = tk.Label(
             card,
             bg=self._COLORS["panel"],
-            fg=self._COLORS["navy"],
+            fg=self._COLORS["white"],
             font=("Segoe UI", 12, "bold"),
             anchor="w",
         )
         self._profile_name.grid(row=0, column=1, sticky="w", pady=(2, 7))
         self._profile_program = tk.Label(
             card,
-            bg=self._COLORS["panel"],
-            fg=self._COLORS["text"],
+            bg=self._COLORS["panel"],  
+            fg=self._COLORS["white"],
             font=("Segoe UI", 10),
             anchor="w",
         )
@@ -222,7 +224,7 @@ class DashboardView:
 
         grade_card = tk.Frame(
             panel,
-            bg=self._COLORS["white"],
+            bg=self._COLORS["fields"],
             highlightbackground=self._COLORS["border"],
             highlightthickness=1,
             padx=16,
@@ -233,27 +235,27 @@ class DashboardView:
         tk.Label(
             grade_card,
             text="Notenziel-Ampel",
-            bg=self._COLORS["white"],
-            fg=self._COLORS["navy"],
+            bg=self._COLORS["fields"],
+            fg=self._COLORS["dark_text"],
             font=("Segoe UI", 12, "bold"),
         ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 12))
         tk.Label(
             grade_card,
             text="Aktueller Schnitt",
-            bg=self._COLORS["white"],
+            bg=self._COLORS["fields"],
             fg=self._COLORS["muted"],
             font=("Segoe UI", 10),
         ).grid(row=1, column=0, sticky="w")
         self._average_grade = tk.Label(
             grade_card,
-            bg=self._COLORS["white"],
-            fg=self._COLORS["navy"],
+            bg=self._COLORS["fields"],
+            fg=self._COLORS["dark_text"],
             font=("Segoe UI", 26, "bold"),
         )
         self._average_grade.grid(row=2, column=0, sticky="w")
         self._grade_target = tk.Label(
             grade_card,
-            bg=self._COLORS["white"],
+            bg=self._COLORS["fields"],
             fg=self._COLORS["muted"],
             font=("Segoe UI", 10),
         )
@@ -263,8 +265,8 @@ class DashboardView:
 
         progress_card = tk.Frame(
             panel,
-            bg=self._COLORS["white"],
-            highlightbackground=self._COLORS["border"],
+            bg=self._COLORS["fields"],
+            highlightbackground=self._COLORS["white"],
             highlightthickness=1,
             padx=16,
             pady=14,
@@ -274,14 +276,14 @@ class DashboardView:
         tk.Label(
             progress_card,
             text="ZEIT- / ECTS-AMPEL",
-            bg=self._COLORS["white"],
-            fg=self._COLORS["navy"],
+            bg=self._COLORS["fields"],
+            fg=self._COLORS["dark_text"],
             font=("Segoe UI", 11, "bold"),
         ).grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 12))
         self._time_label = tk.Label(
             progress_card,
-            bg=self._COLORS["white"],
-            fg=self._COLORS["text"],
+            bg=self._COLORS["fields"],
+            fg=self._COLORS["dark_text"],
             font=("Segoe UI", 10),
         )
         self._time_label.grid(row=1, column=0, sticky="w")
@@ -291,8 +293,8 @@ class DashboardView:
         self._time_bar.grid(row=2, column=0, columnspan=3, sticky="ew", pady=(5, 12))
         self._ects_label = tk.Label(
             progress_card,
-            bg=self._COLORS["white"],
-            fg=self._COLORS["text"],
+            bg=self._COLORS["fields"],
+            fg=self._COLORS["dark_text"],
             font=("Segoe UI", 10),
         )
         self._ects_label.grid(row=3, column=0, sticky="w")
@@ -322,7 +324,7 @@ class DashboardView:
 
         table_frame = tk.Frame(
             panel,
-            bg=self._COLORS["white"],
+            bg=self._COLORS["steel_blue"],
             highlightbackground=self._COLORS["border"],
             highlightthickness=1,
         )
@@ -376,7 +378,7 @@ class DashboardView:
 
     def _build_action_bar(self) -> None:
         """Erstellt die Aktionen zum Importieren, Exportieren und Beenden."""
-        actions = tk.Frame(self._root, bg=self._COLORS["white"], padx=22, pady=12)
+        actions = tk.Frame(self._root, bg=self._COLORS["steel_blue"], padx=22, pady=12)
         actions.grid(row=2, column=0, sticky="ew")
         self._button(actions, "Importieren", self._import_data).pack(
             side=tk.RIGHT, padx=(10, 0)
@@ -400,7 +402,7 @@ class DashboardView:
             panel,
             text=title,
             bg=self._COLORS["panel"],
-            fg=self._COLORS["navy"],
+            fg=self._COLORS["dark_text"],
             font=("Segoe UI", 15, "bold"),
         ).grid(row=0, column=0, sticky="w", pady=(0, 9))
         return panel
@@ -415,7 +417,7 @@ class DashboardView:
             command=command,
             bg=self._COLORS["light_blue"],
             fg=self._COLORS["navy"],
-            activebackground="#D4E5EF",
+            activebackground="#215968",
             activeforeground=self._COLORS["navy"],
             relief=tk.FLAT,
             borderwidth=0,
