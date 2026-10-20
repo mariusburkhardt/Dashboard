@@ -20,10 +20,8 @@ from .domain import (
 
 
 class ProgressBar(tk.Canvas):
-    """Zeichnet einen typisierten, farbigen Fortschrittsbalken."""
 
     def __init__(self, parent: tk.Widget, background: str, fill: str) -> None:
-        """Initialisiert den Hintergrund und den leeren Fortschrittsbalken."""
         super().__init__(
             parent,
             height=12,
@@ -38,14 +36,10 @@ class ProgressBar(tk.Canvas):
 
 
 class DashboardView:
-    """Stellt Studienfortschritt und Modulübersicht grafisch dar."""
 
     _COLORS = {
-        "navy": "#143B5D",
         "steel_blue": "#31859C",
-        "light_blue": "#E8F2F7",
         "panel": "#215968",
-        "border": "#5D5E5F",
         "text": "#D9D9D9",
         "muted": "#62798A",
         "green": "#2C9B73",
@@ -53,11 +47,10 @@ class DashboardView:
         "red": "#C34D4D",
         "white": "#FFFFFF",
         "fields": "#B7DEE8",
-        "dark_text": "#313131",
+        "black": "#000000",
     }
 
     def __init__(self, root: tk.Tk, controller: DashboardController) -> None:
-        """Initialisiert das Fenster und verbindet es mit dem Controller."""
         self._root = root
         self._controller = controller
         self._root.title("Studienfortschritt-Dashboard")
@@ -68,18 +61,16 @@ class DashboardView:
         self._refresh()
 
     def run(self) -> None:
-        """Startet die Ereignisschleife von Tkinter."""
         self._root.mainloop()
 
     def _configure_styles(self) -> None:
-        """Legt Farben und Schriftarten der Tabellenansicht fest."""
         style = ttk.Style(self._root)
         style.theme_use("clam")
         style.configure(
             "Dashboard.Treeview",
             background=self._COLORS["fields"],
             fieldbackground=self._COLORS["fields"],
-            foreground=self._COLORS["dark_text"],
+            foreground=self._COLORS["black"],
             rowheight=36,
             borderwidth=0,
             font=("Segoe UI", 10),
@@ -93,12 +84,11 @@ class DashboardView:
         )
         style.map(
             "Dashboard.Treeview",
-            background=[("selected", "navy")], 
+            background=[("selected", self._COLORS["steel_blue"])], 
             foreground=[("selected", self._COLORS["text"])],
         )
 
     def _build_widgets(self) -> None:
-        """Erstellt Kopfbereich, Fortschrittskarten, Tabelle und Aktionen."""
         self._root.configure(bg=self._COLORS["white"]) 
         self._root.grid_columnconfigure(0, weight=1)
         self._root.grid_rowconfigure(1, weight=1)
@@ -127,7 +117,6 @@ class DashboardView:
         self._build_action_bar()
 
     def _build_profile_card(self, parent: tk.Widget) -> None:
-        """Erstellt den Profil- und Studiengangsbereich."""
         card = tk.Frame(
             parent,
             bg=self._COLORS["panel"],
@@ -146,7 +135,7 @@ class DashboardView:
             highlightthickness=0,
         )
         avatar.create_oval(
-            3, 3, 55, 55, fill=self._COLORS["navy"], outline=""
+            3, 3, 55, 55, fill=self._COLORS["steel_blue"], outline=""
         )
         self._avatar_text_id = avatar.create_text(
             29,
@@ -214,7 +203,6 @@ class DashboardView:
         self._avatar = avatar
 
     def _build_progress_panel(self, parent: tk.Widget) -> None:
-        """Erstellt Notenziel-Ampel und Zeit-/ECTS-Fortschritt."""
         panel = self._panel(parent, "Fortschritt")
         panel.grid(row=0, column=0, sticky="nsew", padx=(0, 9))
         panel.grid_columnconfigure(0, weight=1)
@@ -233,27 +221,27 @@ class DashboardView:
             grade_card,
             text="Notenziel-Ampel",
             bg=self._COLORS["fields"],
-            fg=self._COLORS["dark_text"],
+            fg=self._COLORS["black"],
             font=("Segoe UI", 12, "bold"),
         ).grid(row=0, column=0, columnspan=2, sticky="w", pady=(0, 12))
         tk.Label(
             grade_card,
             text="Aktueller Schnitt",
             bg=self._COLORS["fields"],
-            fg=self._COLORS["muted"],
+            fg=self._COLORS["black"],
             font=("Segoe UI", 10),
         ).grid(row=1, column=0, sticky="w")
         self._average_grade = tk.Label(
             grade_card,
             bg=self._COLORS["fields"],
-            fg=self._COLORS["dark_text"],
+            fg=self._COLORS["black"],
             font=("Segoe UI", 26, "bold"),
         )
         self._average_grade.grid(row=2, column=0, sticky="w")
         self._grade_target = tk.Label(
             grade_card,
             bg=self._COLORS["fields"],
-            fg=self._COLORS["muted"],
+            fg=self._COLORS["black"],
             font=("Segoe UI", 10),
         )
         self._grade_target.grid(row=3, column=0, sticky="w", pady=(4, 0))
@@ -273,13 +261,13 @@ class DashboardView:
             progress_card,
             text="ZEIT- / ECTS-AMPEL",
             bg=self._COLORS["fields"],
-            fg=self._COLORS["dark_text"],
+            fg=self._COLORS["black"],
             font=("Segoe UI", 11, "bold"),
         ).grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 12))
         self._time_label = tk.Label(
             progress_card,
             bg=self._COLORS["fields"],
-            fg=self._COLORS["dark_text"],
+            fg=self._COLORS["black"],
             font=("Segoe UI", 10),
         )
         self._time_label.grid(row=1, column=0, sticky="w")
@@ -290,7 +278,7 @@ class DashboardView:
         self._ects_label = tk.Label(
             progress_card,
             bg=self._COLORS["fields"],
-            fg=self._COLORS["dark_text"],
+            fg=self._COLORS["black"],
             font=("Segoe UI", 10),
         )
         self._ects_label.grid(row=3, column=0, sticky="w")
@@ -300,7 +288,6 @@ class DashboardView:
         self._ects_bar.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(5, 0))
 
     def _build_modules_panel(self, parent: tk.Widget) -> None:
-        """Erstellt die kompakte Modulübersicht aus der Entwurfsvorlage."""
         panel = self._panel(parent, "Modulübersicht")
         panel.grid(row=0, column=1, sticky="nsew", padx=(9, 0))
         panel.grid_rowconfigure(1, weight=1)
@@ -372,7 +359,6 @@ class DashboardView:
         self._module_table.configure(yscrollcommand=scrollbar.set)
 
     def _build_action_bar(self) -> None:
-        """Erstellt die Aktionen zum Importieren, Exportieren und Beenden."""
         actions = tk.Frame(self._root, bg=self._COLORS["steel_blue"], padx=22, pady=12)
         actions.grid(row=2, column=0, sticky="ew")
         self._button(actions, "Importieren", self._import_data).pack(
@@ -384,7 +370,6 @@ class DashboardView:
         self._button(actions, "Beenden", self._root.destroy).pack(side=tk.RIGHT)
 
     def _panel(self, parent: tk.Widget, title: str) -> tk.Frame:
-        """Erstellt eine einheitlich gestaltete Inhaltskarte."""
         panel = tk.Frame(
             parent,
             bg=self._COLORS["panel"],
@@ -396,7 +381,7 @@ class DashboardView:
             panel,
             text=title,
             bg=self._COLORS["panel"],
-            fg=self._COLORS["dark_text"],
+            fg=self._COLORS["text"],
             font=("Segoe UI", 15, "bold"),
         ).grid(row=0, column=0, sticky="w", pady=(0, 9))
         return panel
@@ -404,15 +389,14 @@ class DashboardView:
     def _button(
         self, parent: tk.Widget, text: str, command: Callable[[], None]
     ) -> tk.Button:
-        """Erstellt eine Schaltfläche im Stil der Entwurfsvorlage."""
         return tk.Button(
             parent,
             text=text,
             command=command,
-            bg=self._COLORS["light_blue"],
-            fg=self._COLORS["navy"],
-            activebackground="#215968",
-            activeforeground=self._COLORS["navy"],
+            bg=self._COLORS["text"],
+            fg=self._COLORS["black"],
+            activebackground=self._COLORS["panel"],
+            activeforeground=self._COLORS["black"],
             relief=tk.FLAT,
             borderwidth=0,
             padx=13,
@@ -421,7 +405,6 @@ class DashboardView:
         )
 
     def _badge(self, parent: tk.Widget) -> tk.Label:
-        """Erstellt ein Statusfeld mit neutralem Anfangswert."""
         return tk.Label(
             parent,
             text="",
@@ -432,7 +415,6 @@ class DashboardView:
         )
 
     def _progress_bar(self, parent: tk.Widget) -> ProgressBar:
-        """Erstellt eine leere Fortschrittsleiste."""
         bar = ProgressBar(
             parent,
             background=self._COLORS["white"],
@@ -447,7 +429,6 @@ class DashboardView:
         return bar
 
     def _refresh(self) -> None:
-        """Lädt Studiengang und Kennzahlen und aktualisiert alle Ansichten."""
         program = self._controller.load_study_program()
         if program is None:
             self._display_empty_state()
@@ -460,7 +441,6 @@ class DashboardView:
         self._display_modules(data)
 
     def _display_empty_state(self) -> None:
-        """Zeigt Eingabehinweise, solange noch kein Studiengang angelegt ist."""
         prompt = "Kerndaten anpassen"
         self._profile_name.configure(text=prompt)
         self._profile_program.configure(text=prompt)
@@ -478,7 +458,7 @@ class DashboardView:
         self._time_label.configure(text=prompt)
         self._ects_label.configure(text=prompt)
         for badge in (self._grade_badge, self._time_badge, self._ects_badge):
-            badge.configure(text=prompt, bg=self._COLORS["dark_text"])
+            badge.configure(text=prompt, bg=self._COLORS["black"])
         for bar in (self._time_bar, self._ects_bar):
             self._set_progress_bar(bar, 0.0, TargetStatus.NO_DATA)
         self._module_table.delete(*self._module_table.get_children())
@@ -486,7 +466,6 @@ class DashboardView:
     def _display_profile(
         self, program: StudyProgram, data: DashboardData
     ) -> None:
-        """Zeigt Person, Studiengang und gesetzte Studienziele an."""
         self._profile_name.configure(
             text=program.student_name or "Studierende/r"
         )
@@ -511,7 +490,6 @@ class DashboardView:
         self._avatar.itemconfigure(self._avatar_text_id, text=initials or "S")
 
     def _display_progress(self, data: DashboardData) -> None:
-        """Zeigt Notenschnitt, Zeitplan und ECTS-Fortschritt mit Ampeln."""
         average = (
             f"{data.average_grade:.1f}".replace(".", ",")
             if data.average_grade is not None
@@ -547,7 +525,6 @@ class DashboardView:
     def _set_badge(
         self, badge: tk.Label, status: TargetStatus
     ) -> None:
-        """Setzt Text und Ampelfarbe eines Statusfelds."""
         if status is TargetStatus.ON_TRACK:
             text, color = "Ziel erreicht", self._COLORS["green"]
         elif status is TargetStatus.BEHIND:
@@ -562,7 +539,6 @@ class DashboardView:
         fraction: float,
         status: TargetStatus,
     ) -> None:
-        """Aktualisiert Füllstand und Farbe einer Fortschrittsleiste."""
         color = (
             self._COLORS["green"]
             if status is TargetStatus.ON_TRACK
@@ -587,7 +563,6 @@ class DashboardView:
     def _draw_progress_bar(
         self, event: tk.Event, bar: ProgressBar
     ) -> None:
-        """Zeichnet die Füllung nach einer Größenänderung neu."""
         bar.delete("fill")
         bar.create_rectangle(
             0,
@@ -600,7 +575,6 @@ class DashboardView:
         )
 
     def _display_modules(self, data: DashboardData) -> None:
-        """Füllt die Tabelle mit Modulen, Noten und Prüfungsstatus."""
         self._module_table.delete(*self._module_table.get_children())
         self._module_locations.clear()
         module_indexes: dict[int, int] = {}
@@ -633,7 +607,6 @@ class DashboardView:
         self._update_edit_module_button()
 
     def _update_edit_module_button(self, _event: tk.Event | None = None) -> None:
-        """Aktiviert die Bearbeitung nur bei ausgewähltem Modul."""
         selected = self._module_table.selection()
         state = (
             tk.NORMAL
@@ -643,7 +616,6 @@ class DashboardView:
         self._edit_module_button.configure(state=state)
 
     def _edit_selected_module(self, _event: tk.Event | None = None) -> None:
-        """Öffnet den Bearbeitungsdialog für das ausgewählte Modul."""
         selected = self._module_table.selection()
         if not selected:
             return
@@ -652,7 +624,6 @@ class DashboardView:
             self._open_module_dialog(location)
 
     def _module_status(self, raw_status: str) -> str:
-        """Übersetzt einen Prüfungsstatus in eine kompakte Anzeige."""
         labels = {
             AssessmentStatus.OPEN.value: "Geplant",
             AssessmentStatus.IN_PROGRESS.value: "In Bearbeitung",
@@ -662,7 +633,6 @@ class DashboardView:
         return labels[raw_status]
 
     def _open_core_data_dialog(self) -> None:
-        """Öffnet ein Formular zum Ändern der Studiengang-Kerndaten."""
         program = self._controller.load_study_program()
         fields = (
             [
@@ -689,7 +659,6 @@ class DashboardView:
         dialog, entries = self._form_dialog(dialog_title, fields)
 
         def save() -> None:
-            """Prüft und speichert die geänderten Kerndaten."""
             try:
                 student_name = entries[0].get().strip()
                 program_name = entries[1].get().strip()
@@ -732,7 +701,6 @@ class DashboardView:
     def _open_module_dialog(
         self, module_location: tuple[int, int] | None = None
     ) -> None:
-        """Öffnet ein Formular zum Anlegen oder Bearbeiten eines Moduls."""
         program = self._controller.load_study_program()
         if program is None:
             messagebox.showinfo(
@@ -781,7 +749,6 @@ class DashboardView:
             value: str = "",
             choices: tuple[str, ...] | None = None,
         ) -> None:
-            """Fügt dem Moduldialog ein Eingabefeld hinzu."""
             tk.Label(
                 form,
                 text=label,
@@ -870,7 +837,6 @@ class DashboardView:
         form.grid_columnconfigure(1, weight=1)
 
         def save() -> None:
-            """Validiert das Modul und speichert es im gewählten Semester."""
             try:
                 status = next(
                     item
@@ -923,7 +889,6 @@ class DashboardView:
     def _form_dialog(
         self, title: str, fields: list[tuple[str, str]]
     ) -> tuple[tk.Toplevel, list[ttk.Entry]]:
-        """Erstellt ein modales Eingabeformular mit beschrifteten Textfeldern."""
         dialog = tk.Toplevel(self._root)
         dialog.title(title)
         dialog.configure(bg=self._COLORS["white"])
@@ -950,7 +915,6 @@ class DashboardView:
     def _form_buttons(
         self, dialog: tk.Toplevel, save: Callable[[], None]
     ) -> None:
-        """Fügt Formularaktionen zum Speichern oder Abbrechen hinzu."""
         actions = tk.Frame(dialog, bg=self._COLORS["white"], padx=20, pady=12)
         actions.pack(fill=tk.X)
         self._button(actions, "Abbrechen", dialog.destroy).pack(side=tk.RIGHT)
@@ -961,7 +925,6 @@ class DashboardView:
         dialog.bind("<Escape>", lambda _event: dialog.destroy())
 
     def _import_data(self) -> None:
-        """Importiert einen Studiengang aus einer JSON-Sicherungsdatei."""
         filename = filedialog.askopenfilename(
             parent=self._root,
             title="Dashboard-Daten importieren",
@@ -998,7 +961,6 @@ class DashboardView:
         )
 
     def _export_data(self) -> None:
-        """Exportiert einen Studiengang in eine JSON-Sicherungsdatei."""
         filename = filedialog.asksaveasfilename(
             parent=self._root,
             title="Dashboard-Daten exportieren",
