@@ -1,27 +1,32 @@
-@startuml
+﻿@startuml
 skinparam packageStyle rectangle
 skinparam classAttributeIconSize 0
+left to right direction
+hide empty members
 
 package "Domain" {
     class "StudyProgram\n(studiengang.py)" as StudyProgram {
         +name: str
-        +student_name: str
         +start_date: date
         +planned_semesters: int
         +required_ects: int
         +target_grade: float
-        +current_semester(today: date | None): int
+        +student_name: str
+        +semesters: list[Semester]
+        +current_semester(today: date | None = None): int
     }
 
     class "Semester\n(semester.py)" as Semester {
         +number: int
         +start_date: date
         +end_date: date
+        +modules: list[Module]
     }
 
     class "Module\n(modul.py)" as Module {
         +name: str
         +ects: int
+        +assessment: Assessment
     }
 
     class "Assessment\n(pruefungsleistung.py)" as Assessment {
@@ -49,83 +54,126 @@ package "Domain" {
     }
 }
 
-package "Service" {
-    class DashboardService {
-        +build_dashboard_data(program: StudyProgram, today: date | None): DashboardData
-    }
-}
-
-package "Data transfer" {
-    class DashboardData
-    class ModuleDashboardRow
-    enum TargetStatus
-    enum OverallStatus
-    DashboardData *-- "0..*" ModuleDashboardRow
-    DashboardData ..> TargetStatus
-    DashboardData ..> OverallStatus
-}
-
 package "Persistence" {
-    interface StudyProgramRepository {
+    interface "StudyProgramRepository\n(repositories.py)" as StudyProgramRepository {
         +load(): StudyProgram | None
         +save(program: StudyProgram): None
     }
 
-    class SQLiteStudyProgramRepository {
+    class "SQLiteStudyProgramRepository\n(storage.py)" as SQLiteStudyProgramRepository {
         +load(): StudyProgram | None
         +save(program: StudyProgram): None
     }
 }
 
-package "Data transfer" {
-    class "JSON-Transfer" as JsonTransfer {
-        +export_study_program(program: StudyProgram, path: Path): None
-        +import_study_program(path: Path): StudyProgram
+package "Application" {
+    class "DashboardService\n(dashboard.py)" as DashboardService {
+        +build_dashboard_data(program: StudyProgram, today: date | None = None): DashboardData
     }
-}
 
-package "Presentation" {
-    class DashboardController {
-        +load_study_program(): StudyProgram
-        +load_dashboard_data(today: date | None): DashboardData
+    class "DashboardController\n(controller.py)" as DashboardController {
+        +load_dashboard_data(today: date | None = None): DashboardData
+        +load_study_program(): StudyProgram | None
         +save_study_program(program: StudyProgram): None
         +add_module(semester_number: int, module: Module): None
         +update_module(semester_number: int, module_index: int, module: Module): None
         +import_study_program(path: Path): None
         +export_study_program(path: Path): None
     }
+}
 
-    class DashboardView {
-        +run(): None
-        -open_core_data_dialog(): None
-        -open_module_dialog(): None
-        -edit_selected_module(): None
-        -import_data(): None
-        -export_data(): None
+package "Data transfer / DTO" {
+    class "DashboardData\n(dto.py)" as DashboardData {
+        +program_name: str
+        +student_name: str
+        +current_semester: int
+        +planned_semesters: int
+        +remaining_semesters: int
+        +required_ects: int
+        +completed_ects: int
+        +progress_percentage: float
+        +expected_ects: int
+        +target_grade: float
+        +average_grade: float | None
+        +time_status: TargetStatus
+        +ects_status: TargetStatus
+        +grade_status: TargetStatus
+        +overall_status: OverallStatus
+        +modules: tuple[ModuleDashboardRow, ...]
     }
+
+    class "ModuleDashboardRow\n(dto.py)" as ModuleDashboardRow {
+        +semester_number: int
+        +module_name: str
+        +ects: int
+        +assessment_type: str
+        +assessment_status: str
+        +grade: float | None
+    }
+
+    enum "TargetStatus\n(dto.py)" as TargetStatus {
+        ON_TRACK
+        BEHIND
+        NO_DATA
+    }
+
+    enum "OverallStatus\n(dto.py)" as OverallStatus {
+        ON_TRACK
+        AT_RISK
+        OVERDUE
+    }
+
+    class "JSON transfer\n(transfer.py)" as JsonTransfer {
+        +export_study_program(program: StudyProgram, path: Path): None
+        +import_study_program(path: Path): StudyProgram
+    }
+}
+
+package "Presentation" {
+    class "DashboardView\n(ui.py)" as DashboardView {
+        +run(): None
+    }
+
+    class "ProgressBar\n(ui.py)" as ProgressBar
 }
 
 package "Startup" {
-    class DashboardApplication {
+    class "DashboardApplication\n(application.py)" as DashboardApplication {
         +start(): None
     }
+
+    class "main\n(main.py)" as Main
 }
 
-StudyProgram "1" o-- "0..*" Semester
+StudyProgram "1" *-- "0..*" Semester
 Semester "1" *-- "0..*" Module
 Module "1" *-- "1" Assessment
 Assessment ..> AssessmentType
 Assessment ..> AssessmentStatus
+
 SQLiteStudyProgramRepository ..|> StudyProgramRepository
+
 DashboardService ..> StudyProgram
 DashboardService ..> DashboardData
+DashboardService ..> AssessmentStatus
 DashboardController --> DashboardService
 DashboardController --> StudyProgramRepository
+DashboardController ..> StudyProgram
+DashboardController ..> Module
+DashboardController ..> JsonTransfer : imports/exports JSON
+DashboardController ..> DashboardData
+
+DashboardData *-- "0..*" ModuleDashboardRow
+DashboardData ..> TargetStatus
+DashboardData ..> OverallStatus
+
 DashboardView --> DashboardController
 DashboardView ..> DashboardData
-DashboardController ..> JsonTransfer : imports/exports JSON
-DashboardApplication ..> SQLiteStudyProgramRepository : creates
-DashboardApplication ..> DashboardService : creates
-DashboardApplication ..> DashboardController : wires
-DashboardApplication ..> DashboardView : starts
+ProgressBar --> DashboardView
+
+DashboardApplication --> SQLiteStudyProgramRepository : creates
+DashboardApplication --> DashboardService : creates
+DashboardApplication --> DashboardController : wires
+DashboardApplication --> DashboardView : starts
+Main --> DashboardApplication : starts
 @enduml

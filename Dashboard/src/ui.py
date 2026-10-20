@@ -42,7 +42,6 @@ class DashboardView:
 
     _COLORS = {
         "navy": "#143B5D",
-        "teal": "#215968",
         "steel_blue": "#31859C",
         "light_blue": "#E8F2F7",
         "panel": "#215968", #   "#F1F6F9"
@@ -87,14 +86,14 @@ class DashboardView:
         )
         style.configure(
             "Dashboard.Treeview.Heading",
-            background=self._COLORS["navy"],
+            background=self._COLORS["steel_blue"],
             foreground=self._COLORS["white"],
             font=("Segoe UI", 9, "bold"),
             padding=(8, 10),
         )
         style.map(
             "Dashboard.Treeview",
-            background=[("selected", "#D5E9F2")], 
+            background=[("selected", "navy")], 
             foreground=[("selected", self._COLORS["text"])],
         )
 
@@ -132,7 +131,6 @@ class DashboardView:
         card = tk.Frame(
             parent,
             bg=self._COLORS["panel"],
-            highlightbackground=self._COLORS["border"],
             highlightthickness=1,
             padx=16,
             pady=12,
@@ -148,7 +146,7 @@ class DashboardView:
             highlightthickness=0,
         )
         avatar.create_oval(
-            3, 3, 55, 55, fill=self._COLORS["steel_blue"], outline=""
+            3, 3, 55, 55, fill=self._COLORS["navy"], outline=""
         )
         self._avatar_text_id = avatar.create_text(
             29,
@@ -178,7 +176,7 @@ class DashboardView:
         self._profile_start = tk.Label(
             card,
             bg=self._COLORS["panel"],
-            fg=self._COLORS["muted"],
+            fg=self._COLORS["text"],  
             font=("Segoe UI", 10),
             anchor="w",
         )
@@ -186,7 +184,7 @@ class DashboardView:
         self._profile_plan = tk.Label(
             card,
             bg=self._COLORS["panel"],
-            fg=self._COLORS["muted"],
+            fg=self._COLORS["text"],
             font=("Segoe UI", 10),
             anchor="w",
         )
@@ -194,7 +192,7 @@ class DashboardView:
         self._profile_goal = tk.Label(
             card,
             bg=self._COLORS["panel"],
-            fg=self._COLORS["muted"],
+            fg=self._COLORS["text"],
             font=("Segoe UI", 10),
             anchor="w",
         )
@@ -202,7 +200,7 @@ class DashboardView:
         self._profile_ects = tk.Label(
             card,
             bg=self._COLORS["panel"],
-            fg=self._COLORS["muted"],
+            fg=self._COLORS["text"],
             font=("Segoe UI", 10),
             anchor="w",
         )
@@ -225,7 +223,6 @@ class DashboardView:
         grade_card = tk.Frame(
             panel,
             bg=self._COLORS["fields"],
-            highlightbackground=self._COLORS["border"],
             highlightthickness=1,
             padx=16,
             pady=14,
@@ -266,7 +263,6 @@ class DashboardView:
         progress_card = tk.Frame(
             panel,
             bg=self._COLORS["fields"],
-            highlightbackground=self._COLORS["white"],
             highlightthickness=1,
             padx=16,
             pady=14,
@@ -325,7 +321,6 @@ class DashboardView:
         table_frame = tk.Frame(
             panel,
             bg=self._COLORS["steel_blue"],
-            highlightbackground=self._COLORS["border"],
             highlightthickness=1,
         )
         table_frame.grid(row=1, column=0, sticky="nsew")
@@ -393,7 +388,6 @@ class DashboardView:
         panel = tk.Frame(
             parent,
             bg=self._COLORS["panel"],
-            highlightbackground=self._COLORS["border"],
             highlightthickness=1,
             padx=14,
             pady=12,
@@ -424,7 +418,6 @@ class DashboardView:
             padx=13,
             pady=8,
             font=("Segoe UI", 9, "bold"),
-            cursor="hand2",
         )
 
     def _badge(self, parent: tk.Widget) -> tk.Label:
@@ -432,7 +425,7 @@ class DashboardView:
         return tk.Label(
             parent,
             text="",
-            bg=self._COLORS["border"],
+            #bg=self._COLORS["white"], 
             fg=self._COLORS["text"],
             padx=12,
             pady=8,
@@ -443,8 +436,8 @@ class DashboardView:
         """Erstellt eine leere Fortschrittsleiste."""
         bar = ProgressBar(
             parent,
-            background=self._COLORS["border"],
-            fill=self._COLORS["teal"],
+            background=self._COLORS["white"],
+            fill=self._COLORS["panel"],
         )
         bar.bind(
             "<Configure>",
@@ -486,7 +479,7 @@ class DashboardView:
         self._time_label.configure(text=prompt)
         self._ects_label.configure(text=prompt)
         for badge in (self._grade_badge, self._time_badge, self._ects_badge):
-            badge.configure(text=prompt, bg=self._COLORS["muted"])
+            badge.configure(text=prompt, bg=self._COLORS["dark_text"])
         for bar in (self._time_bar, self._ects_bar):
             self._set_progress_bar(bar, 0.0, TargetStatus.NO_DATA)
         self._module_table.delete(*self._module_table.get_children())
