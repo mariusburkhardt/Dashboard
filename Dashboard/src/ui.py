@@ -1001,20 +1001,6 @@ class DashboardView:
         )
         if not filename:
             return
-        program_exists = self._controller.load_study_program() is not None
-        confirmation = (
-            "Beim Import werden die aktuell gespeicherten "
-            "Studiengangsdaten ersetzt."
-            if program_exists
-            else "Die Studiengangsdaten aus der JSON-Datei werden in der "
-            "leeren Datenbank gespeichert."
-        )
-        if not messagebox.askyesno(
-            "Daten ersetzen?" if program_exists else "Daten importieren?",
-            confirmation,
-            parent=self._root,
-        ):
-            return
         try:
             self._controller.import_study_program(Path(filename))
         except (OSError, RuntimeError, sqlite3.Error, ValueError) as error:
@@ -1023,11 +1009,6 @@ class DashboardView:
             )
             return
         self._refresh()
-        messagebox.showinfo(
-            "Import abgeschlossen",
-            "Die Studiengangsdaten wurden importiert.",
-            parent=self._root,
-        )
 
     def _export_data(self) -> None:
         """Exportiert einen Studiengang in eine JSON-Sicherungsdatei."""

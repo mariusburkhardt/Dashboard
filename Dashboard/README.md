@@ -23,8 +23,8 @@ Studiengang gespeichert ist, zeigen die Kerndaten den Hinweis
 erforderlichen Angaben erfassen. Module können im jeweils vorhandenen
 Semester ergänzt werden. Falls noch kein Semester vorhanden ist, wird beim
 ersten Modul das erste Semester ab dem Studienstart angelegt. **Importieren**
-und **Exportieren** verwenden JSON-Sicherungsdateien. Vor dem Import muss das
-Ersetzen der gespeicherten Daten bestätigt werden. Die Datenbank liegt unter
+und **Exportieren** verwenden JSON-Sicherungsdateien. Ein Import ersetzt
+gespeicherte Studiengangsdaten unmittelbar. Die Datenbank liegt unter
 `data/study_dashboard.sqlite3`.
 Zum Ausprobieren kann die Datei
 [`examples/beispielstudiengang.json`](examples/beispielstudiengang.json) über

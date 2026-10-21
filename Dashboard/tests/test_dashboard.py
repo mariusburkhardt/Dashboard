@@ -178,6 +178,33 @@ def test_empty_dashboard_prompts_for_core_data() -> None:
     assert view._edit_module_button.configure.call_args.kwargs["state"] == "disabled"
 
 
+def test_import_does_not_ask_for_confirmation(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Importiert eine ausgewählte Sicherung direkt ohne Rückfrage."""
+    view = object.__new__(DashboardView)
+    view._root = Mock()
+    view._controller = Mock()
+    view._refresh = Mock()
+    askyesno = Mock()
+    monkeypatch.setattr(
+        "src.ui.filedialog.askopenfilename",
+        lambda **_kwargs: "backup.json",
+    )
+    monkeypatch.setattr("src.ui.messagebox.askyesno", askyesno)
+    monkeypatch.setattr(
+        "src.ui.messagebox.showinfo",
+        lambda *_args, **_kwargs: pytest.fail(
+            "Nach dem Import soll keine Bestätigung angezeigt werden."
+        ),
+    )
+
+    view._import_data()
+
+    view._controller.import_study_program.assert_called_once_with(Path("backup.json"))
+    view._controller.load_study_program.assert_not_called()
+    view._refresh.assert_called_once_with()
+    askyesno.assert_not_called()
+
+
 def test_progress_display_shows_overall_status_and_remaining_semesters() -> None:
     """Zeigt Gesamtstatus und verbleibende Semester in der Fortschrittsansicht."""
     view = object.__new__(DashboardView)
