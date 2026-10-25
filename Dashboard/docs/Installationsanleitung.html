@@ -100,8 +100,9 @@
 
   <h2>2. Repository herunterladen</h2>
   <p>
-    Öffnen Sie PowerShell und führen Sie die folgenden Befehle aus. Das
-    Repository wird in den aktuellen Ordner geklont.
+    Öffnen Sie PowerShell und führen Sie die folgenden Befehle aus. Git erstellt
+    im aktuellen Ordner den Repository-Ordner <code>Dashboard</code>; das
+    Python-Projekt liegt darin im gleichnamigen Unterordner.
   </p>
   <pre>git clone https://github.com/mariusburkhardt/Dashboard.git
 cd .\Dashboard\Dashboard</pre>
@@ -118,7 +119,7 @@ python -m src.main</pre>
 
   <h2>Daten und erneuter Start</h2>
   <p>
-    Beim ersten Start legt die Anwendung in <code>Dashboard\data</code> eine
+    Beim ersten Start legt die Anwendung im Ordner <code>data</code> eine
     leere SQLite-Datenbank an. Klicken Sie auf <strong>Kerndaten anpassen</strong>,
     um Ihren Namen, Studiengang, Studienstart und die Zielwerte einzutragen.
     Die Angaben bleiben bei späteren Starts gespeichert.
@@ -126,7 +127,7 @@ python -m src.main</pre>
   <p>
     Zum Ausprobieren können Sie stattdessen über <strong>Importieren</strong>
     die Datei
-    <code>Dashboard\examples\beispielstudiengang.json</code> auswählen. Der
+    <code>examples\beispielstudiengang.json</code> auswählen. Der
     Datensatz enthält ausdrücklich gekennzeichnete Beispieldaten.
   </p>
 

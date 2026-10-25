@@ -107,6 +107,7 @@ Dashboard/
 ├── docs/
 │   ├── Installationsanleitung.html
 │   ├── Installationsanleitung.pdf
+│   ├── architecture.drawio
 │   └── architecture.puml
 ├── examples/
 │   └── beispielstudiengang.json
@@ -132,7 +133,8 @@ Dashboard/
 │   ├── test_dashboard.py
 │   ├── test_domain.py
 │   ├── test_storage.py
-│   └── test_transfer.py
+│   ├── test_transfer.py
+│   └── test_vererbung.py
 └── README.md
 ```
 

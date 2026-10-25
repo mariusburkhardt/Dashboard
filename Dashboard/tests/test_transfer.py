@@ -71,11 +71,11 @@ def test_example_study_program_can_be_imported() -> None:
 
     program = import_study_program(example_path)
 
-    assert program.name == "Cyber Security B.Sc. (Beispiel)"
-    assert program.student_name == "Beispielperson"
+    assert program.name == "Cyber Security B.Sc"
+    assert program.student_name == "Marius Burkhardt"
     assert program.required_ects == 180
-    assert len(program.semesters) == 2
-    assert sum(len(semester.modules) for semester in program.semesters) == 8
+    assert len(program.semesters) == 1
+    assert sum(len(semester.modules) for semester in program.semesters) == 12
 
 
 def test_import_converts_legacy_whole_number_ects_to_integers(
