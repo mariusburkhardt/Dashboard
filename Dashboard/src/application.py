@@ -10,7 +10,7 @@ from .ui import DashboardView
 
 
 class DashboardApplication:
-    """Erzeugt und verbindet die Architekturkomponenten der Anwendung."""
+    """verbindet die Architekturkomponenten der Anwendung."""
 
     def __init__(self, database_path: Path | None = None) -> None:
         """Legt den Speicherort der Datenbank fest."""
