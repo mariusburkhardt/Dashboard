@@ -160,4 +160,5 @@ Repository: <https://github.com/mariusburkhardt/Dashboard>
 cd .\Dashboard
 python -m pip install -r requirements.txt
 python -m pytest -q
+
 ```
