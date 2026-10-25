@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Abstract – Studienfortschritts-Dashboard</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 22mm 24mm;
+    }
+
+    body {
+      color: #202a33;
+      font-family: Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.48;
+      margin: 0 auto;
+      max-width: 170mm;
+    }
+
+    h1 {
+      color: #154360;
+      font-size: 22pt;
+      margin: 0 0 5mm;
+    }
+
+    h2 {
+      color: #154360;
+      font-size: 13pt;
+      margin: 6mm 0 2mm;
+      break-after: avoid;
+    }
+
+    .subtitle {
+      color: #526575;
+      margin: 0 0 2mm;
+    }
+
+    .author {
+      color: #526575;
+      font-size: 10pt;
+      margin: 0 0 8mm;
+    }
+
+    p {
+      margin: 0 0 3.5mm;
+      text-align: justify;
+      orphans: 3;
+      widows: 3;
+    }
+
+    @media screen {
+      body {
+        margin: 20mm auto;
+        padding: 18mm 24mm;
+        box-shadow: 0 2px 14px #0002;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Abstract</h1>
+  <p class="subtitle">
+    Studienfortschritts-Dashboard für den Studiengang Cyber Security
+  </p>
+  <p class="author">
+    Marius Burkhardt · Objektorientierte und funktionale Programmierung mit Python
+  </p>
+
+  <h2>Ausgangslage und Ziel</h2>
+  <p>
+    Ziel des Projekts war die Entwicklung eines funktionalen Python-Prototyps,
+    mit dem sich der persönliche Studienfortschritt übersichtlich erfassen und
+    einschätzen lässt. Im Mittelpunkt standen die Stammdaten des Studiengangs,
+    die belegten Module, Prüfungsstatus und Noten sowie der zeitliche und
+    fachliche Fortschritt. Das Dashboard soll nicht eine vollständige
+    Hochschulverwaltung ersetzen, sondern die wichtigsten Informationen für
+    eine einzelne studierende Person zusammenführen.
+  </p>
+
+  <h2>Vorgehen und Umsetzung</h2>
+  <p>
+    Die Umsetzung baute auf dem Fachmodell aus Phase 1 auf. Zunächst wurden
+    dessen Objekte in Python übertragen und anschließend um Validierung,
+    Berechnungen, Speicherung und eine grafische Oberfläche ergänzt. Die
+    Verantwortlichkeiten sind in Domainklassen, Service, Controller,
+    Repository, Datentransfer, View und Application gegliedert. Die
+    Fachklassen bilden Studiengang, Semester, Module und Prüfungsleistungen
+    ab. Der Dashboard-Service berechnet unter anderem bestandene ECTS, den
+    Notendurchschnitt, zeitliche Sollwerte und einen aggregierten Gesamtstatus.
+  </p>
+  <p>
+    Die Oberfläche wurde mit Tkinter umgesetzt. Studiengangsdaten werden in
+    einer lokalen SQLite-Datenbank gespeichert und können als vollständige
+    JSON-Sicherung importiert oder exportiert werden. Der Import validiert die
+    eingelesenen Daten und ersetzt einen vorhandenen Datensatz unmittelbar.
+    Beim ersten Start bleibt die Datenbank leer; die Kerndaten können über die
+    Oberfläche eingetragen oder aus einer Beispieldatei importiert werden.
+  </p>
+
+  <h2>Ergebnis und Erkenntnisse</h2>
+  <p>
+    Entstanden ist ein startbarer Prototyp mit einer grafischen
+    Modulübersicht, Bearbeitungsmöglichkeiten für Kerndaten und Module,
+    Fortschrittsanzeigen sowie persistentem Speichern und Datenaustausch.
+    Automatisierte Tests decken zentrale Regeln des Fachmodells, Berechnungen,
+    Speicherung, Import und Export sowie ausgewählte Abläufe der Oberfläche
+    ab. Sie unterstützen die gezielte Prüfung einzelner Funktionen; die
+    Oberfläche selbst muss zusätzlich praktisch erprobt werden.
+  </p>
+  <p>
+    Eine wichtige Erkenntnis war, dass die Trennung in Schichten zwar mehr
+    Dateien und zunächst mehr Struktur bedeutet, Änderungen und Tests dadurch
+    aber besser zuzuordnen sind. Dataclasses verringern wiederkehrenden
+    Konstruktionscode, ersetzen jedoch keine fachliche Validierung. Enums
+    begrenzen Prüfungsarten und Statuswerte. Auf Unterklassen für einzelne
+    Prüfungsarten wurde bewusst verzichtet, weil diese im aktuellen Modell
+    dieselben Daten und Regeln besitzen und sich nur als Werte unterscheiden.
+    Die Beziehungen zwischen Studiengang, Semestern und Modulen werden als
+    Komposition modelliert.
+  </p>
+
+  <h2>Reflexion und Weiterverwendung</h2>
+  <p>
+    Gut gelungen ist aus meiner Sicht, dass aus dem zunächst abstrakten
+    Fachmodell eine durchgängige Anwendung mit Oberfläche, Berechnungen und
+    lokaler Speicherung geworden ist. Besonders stolz bin ich darauf, dass der
+    Prototyp den Weg vom leeren Datenbestand über Eingabe oder Import bis zur
+    Auswertung in einer Anwendung zusammenführt. Wichtig war mir außerdem,
+    dass Importdaten nicht ungeprüft in die Berechnungen gelangen und dass die
+    Oberfläche auch ohne vorhandenen Studiengang sinnvoll startet.
+    Aufwendiger als erwartet war der Aufbau der Tkinter-Oberfläche: Schon
+    einfache Dialoge und Darstellungen benötigen sorgfältige Abstimmung
+    zwischen Widgets und Anwendungslogik. Auch die fachlichen Ampelregeln sind
+    vereinfachte Prototypannahmen und keine verbindlichen Vorgaben einer
+    Hochschule.
+  </p>
+  <p>
+    Das Ergebnis kann als Grundlage für eine Weiterentwicklung dienen. Denkbar
+    sind zusätzliche Auswertungen, weitere Exportformate, eine verfeinerte
+    Bedienoberfläche oder ein Austausch der SQLite-Speicherung. Die Trennung
+    der Komponenten erleichtert solche Änderungen, ohne dass dafür die
+    grundlegende Fachstruktur neu entworfen werden muss. Für einen produktiven
+    Einsatz wären zuvor Anforderungen, fachliche Berechnungsregeln,
+    Datenschutz und Bedienbarkeit mit tatsächlichen Nutzenden zu prüfen.
+  </p>
+</body>
+</html>

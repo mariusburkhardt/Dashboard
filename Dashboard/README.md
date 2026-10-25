@@ -102,6 +102,7 @@ angepasst werden.
 ```text
 Dashboard/
 ├── .gitignore
+├── Dashboard starten.bat
 ├── agents.md
 ├── data/                         # SQLite-Datenbank (wird beim Start angelegt)
 ├── docs/
@@ -146,6 +147,9 @@ Voraussetzung: Python 3.11 oder neuer mit Tkinter-Unterstützung.
 cd .\Dashboard
 python -m src.main
 ```
+
+Alternativ können Sie `Dashboard starten.bat` im Projektordner per Doppelklick
+ausführen.
 
 Runtime-Abhängigkeiten außerhalb der Python-Standardbibliothek gibt es nicht.
 
