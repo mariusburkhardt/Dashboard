@@ -1,5 +1,4 @@
 from collections.abc import Callable
-from dataclasses import replace
 from datetime import date
 from pathlib import Path
 from unittest.mock import Mock
@@ -148,7 +147,8 @@ def test_empty_dashboard_prompts_for_core_data() -> None:
         "_time_label",
         "_ects_label",
         "_grade_badge",
-        "_overall_badge",
+        "_time_badge",
+        "_ects_badge",
         "_time_bar",
         "_ects_bar",
         "_avatar",
@@ -176,124 +176,6 @@ def test_empty_dashboard_prompts_for_core_data() -> None:
     assert view._profile_ects.configure.call_args.kwargs["text"].endswith(prompt)
     assert view._add_module_button.configure.call_args.kwargs["state"] == "disabled"
     assert view._edit_module_button.configure.call_args.kwargs["state"] == "disabled"
-
-
-def test_import_does_not_ask_for_confirmation(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Importiert eine ausgewählte Sicherung direkt ohne Rückfrage."""
-    view = object.__new__(DashboardView)
-    view._root = Mock()
-    view._controller = Mock()
-    view._refresh = Mock()
-    askyesno = Mock()
-    monkeypatch.setattr(
-        "src.ui.filedialog.askopenfilename",
-        lambda **_kwargs: "backup.json",
-    )
-    monkeypatch.setattr("src.ui.messagebox.askyesno", askyesno)
-    monkeypatch.setattr(
-        "src.ui.messagebox.showinfo",
-        lambda *_args, **_kwargs: pytest.fail(
-            "Nach dem Import soll keine Bestätigung angezeigt werden."
-        ),
-    )
-
-    view._import_data()
-
-    view._controller.import_study_program.assert_called_once_with(Path("backup.json"))
-    view._controller.load_study_program.assert_not_called()
-    view._refresh.assert_called_once_with()
-    askyesno.assert_not_called()
-
-
-def test_progress_display_shows_overall_status_and_remaining_semesters() -> None:
-    """Zeigt Gesamtstatus und verbleibende Semester in der Fortschrittsansicht."""
-    view = object.__new__(DashboardView)
-    for name in (
-        "_average_grade",
-        "_grade_target",
-        "_overall_badge",
-        "_grade_badge",
-        "_time_label",
-        "_time_bar",
-        "_ects_label",
-        "_ects_bar",
-    ):
-        setattr(view, name, Mock())
-    view._set_overall_badge = Mock()
-    view._set_badge = Mock()
-    view._set_progress_bar = Mock()
-
-    data = DashboardService().build_dashboard_data(
-        make_program(), today=date(2026, 10, 17)
-    )
-    view._display_progress(data)
-
-    view._set_overall_badge.assert_called_once_with(OverallStatus.ON_TRACK)
-    view._set_badge.assert_called_once_with(
-        view._grade_badge, TargetStatus.ON_TRACK
-    )
-    assert "4 verbleibend" in view._time_label.configure.call_args.kwargs["text"]
-
-
-@pytest.mark.parametrize(
-    ("status", "label", "color"),
-    [
-        (OverallStatus.ON_TRACK, "Im Plan", "#2C9B73"),
-        (OverallStatus.AT_RISK, "Aufmerksamkeit erforderlich", "#D18B25"),
-        (
-            OverallStatus.OVERDUE,
-            "Studiendauer überschritten",
-            "#C34D4D",
-        ),
-    ],
-)
-def test_overall_status_badge_uses_the_aggregate_status_color(
-    status: OverallStatus, label: str, color: str
-) -> None:
-    """Zeigt den Gesamtstatus mit passender Beschriftung und Ampelfarbe."""
-    view = object.__new__(DashboardView)
-    view._overall_badge = Mock()
-
-    view._set_overall_badge(status)
-
-    view._overall_badge.configure.assert_called_once_with(
-        text=label, bg=color, fg=DashboardView._COLORS["white"]
-    )
-
-
-@pytest.mark.parametrize(
-    ("assessment_status", "label", "tag"),
-    [
-        (AssessmentStatus.OPEN, "Geplant", "planned"),
-        (AssessmentStatus.IN_PROGRESS, "In Bearbeitung", "in_progress"),
-        (AssessmentStatus.PASSED, "Abgeschlossen", "passed"),
-        (AssessmentStatus.FAILED, "Nicht bestanden", "failed"),
-    ],
-)
-def test_module_table_applies_status_colors(
-    assessment_status: AssessmentStatus, label: str, tag: str
-) -> None:
-    """Ordnet jedem Prüfungsstatus die passende farbige Tabellenmarkierung zu."""
-    data = DashboardService().build_dashboard_data(
-        make_program(), today=date(2026, 10, 17)
-    )
-    module = replace(
-        data.modules[0],
-        assessment_status=assessment_status.value,
-        grade=1.7 if assessment_status is AssessmentStatus.PASSED else None,
-    )
-    data = replace(data, modules=(module,))
-    view = object.__new__(DashboardView)
-    view._module_table = Mock()
-    view._module_table.get_children.return_value = ()
-    view._module_locations = {}
-    view._update_edit_module_button = Mock()
-
-    view._display_modules(data)
-
-    inserted_row = view._module_table.insert.call_args.kwargs
-    assert inserted_row["values"][-1] == label
-    assert inserted_row["tags"] == (tag,)
 
 
 def test_core_data_dialog_creates_first_study_program() -> None:

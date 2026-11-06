@@ -6,11 +6,10 @@ Schichtenmodell aus Phase 2.
 
 ## Funktionen
 
-- zeigt aktuelles, geplantes und verbleibendes Semester sowie den Gesamtstatus
+- zeigt aktuelles und geplantes Semester sowie verbleibende Semester
 - berechnet bestandene ECTS, den ECTS-Fortschritt und den Notendurchschnitt
 - vergleicht ECTS-Fortschritt und Notendurchschnitt mit den gesetzten Zielen
-- zeigt Module, ECTS, Noten und farbige Prüfungsstatus in der Übersicht; im
-  Moduldialog lassen sich Prüfungsart und Status auswählen
+- stellt Module, Prüfungsarten, Prüfungsstatus und Noten in einer Tkinter-GUI dar
 - speichert einen Studiengang mit Semestern, Modulen und Prüfungsleistungen in
   einer SQLite-Datenbank
 - ermöglicht das Bearbeiten der Kerndaten sowie das Hinzufügen und Bearbeiten
@@ -23,8 +22,8 @@ Studiengang gespeichert ist, zeigen die Kerndaten den Hinweis
 erforderlichen Angaben erfassen. Module können im jeweils vorhandenen
 Semester ergänzt werden. Falls noch kein Semester vorhanden ist, wird beim
 ersten Modul das erste Semester ab dem Studienstart angelegt. **Importieren**
-und **Exportieren** verwenden JSON-Sicherungsdateien. Ein Import ersetzt
-gespeicherte Studiengangsdaten unmittelbar. Die Datenbank liegt unter
+und **Exportieren** verwenden JSON-Sicherungsdateien. Vor dem Import muss das
+Ersetzen der gespeicherten Daten bestätigt werden. Die Datenbank liegt unter
 `data/study_dashboard.sqlite3`.
 Zum Ausprobieren kann die Datei
 [`examples/beispielstudiengang.json`](examples/beispielstudiengang.json) über
@@ -46,21 +45,12 @@ Zum Ausprobieren kann die Datei
 
 Das UML-Klassendiagramm der Gesamtarchitektur liegt in
 [`docs/architecture.puml`](docs/architecture.puml).
-Eine bearbeitbare draw.io-Version liegt unter
-[`docs/architecture.drawio`](docs/architecture.drawio).
-Die View spricht den Controller an. Dieser koordiniert Dashboard-Service,
-Repository und JSON-Transfer. Nur die Application kennt die konkrete SQLite-
-Implementierung und verdrahtet die Komponenten.
-Das Diagramm zeigt die technische Gesamtarchitektur der Umsetzung. Es ergänzt
-das sprachunabhängige Entity-Modell aus Phase 1 um Service, Controller,
-Repository, DTOs, Oberfläche und Programmeinstieg.
 
 ### OOP- und Modellierungsentscheidungen
 
 - `StudyProgram`, `Semester`, `Module` und `Assessment` sind `dataclass`-
-  Fachklassen. Ein Studiengang besitzt seine Semester, ein Semester seine
-  Module und ein Modul genau eine Prüfungsleistung. Die SQLite-Fremdschlüssel
-  bilden diese Kompositionen mit Löschweitergabe ab.
+  Fachklassen. Ihre Beziehung ist bewusst als Studiengang-Aggregation und
+  Semester-/Modul-Komposition modelliert.
 - Ein Modul besitzt genau eine Prüfungsleistung. `AssessmentStatus` und
   `AssessmentType` sind Enums; eine bestandene Prüfung muss eine gültige Note
   haben. Getter/Setter sind für die einfachen Datenträger nicht erforderlich.
@@ -70,8 +60,7 @@ Repository, DTOs, Oberfläche und Programmeinstieg.
 - Mehrere Fachobjekte betreffende Berechnungen liegen im `DashboardService`.
   Der `DashboardController` hängt vom Repository-Protokoll und nicht von der
   SQLite-Implementierung ab. Damit kann die Speicherung ausgetauscht und der
-  Controller mit einem Test-Repository geprüft werden. Der JSON-Transfer ist
-  als Funktionsmodul umgesetzt, nicht als zusätzliche Fachklasse.
+  Controller mit einem Test-Repository geprüft werden.
 
 ### Berechnungs- und Ampellogik
 
@@ -89,10 +78,7 @@ Repository, DTOs, Oberfläche und Programmeinstieg.
   geplante Studiendauer nicht überschritten ist. Ein verfehltes Leistungsziel
   oder ein noch nicht vorhandener Notendurchschnitt führt zu
   **Aufmerksamkeit erforderlich**. Nach Überschreiten der geplanten Dauer
-  lautet der Status **Geplante Studiendauer überschritten**. Dieser
-  Gesamtstatus wird als einzige Text-Ampel für Zeit und ECTS angezeigt. Die
-  farbigen Fortschrittsbalken zeigen weiterhin deren jeweiligen Fortschritt;
-  ein separates Statusfeld pro Kennzahl gibt es nicht.
+  lautet der Status **Geplante Studiendauer überschritten**.
 
 Diese Schwellen sind explizite Prototypregeln und können bei Bedarf fachlich
 angepasst werden.
@@ -102,13 +88,11 @@ angepasst werden.
 ```text
 Dashboard/
 ├── .gitignore
-├── Dashboard starten.bat
 ├── agents.md
 ├── data/                         # SQLite-Datenbank (wird beim Start angelegt)
 ├── docs/
 │   ├── Installationsanleitung.html
 │   ├── Installationsanleitung.pdf
-│   ├── architecture.drawio
 │   └── architecture.puml
 ├── examples/
 │   └── beispielstudiengang.json
@@ -134,8 +118,7 @@ Dashboard/
 │   ├── test_dashboard.py
 │   ├── test_domain.py
 │   ├── test_storage.py
-│   ├── test_transfer.py
-│   └── test_vererbung.py
+│   └── test_transfer.py
 └── README.md
 ```
 
@@ -147,9 +130,6 @@ Voraussetzung: Python 3.11 oder neuer mit Tkinter-Unterstützung.
 cd .\Dashboard
 python -m src.main
 ```
-
-Alternativ können Sie `Dashboard starten.bat` im Projektordner per Doppelklick
-ausführen.
 
 Runtime-Abhängigkeiten außerhalb der Python-Standardbibliothek gibt es nicht.
 

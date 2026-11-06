@@ -6,9 +6,10 @@ from datetime import date
 from .semester import Semester
 
 
+"""Studiengang mit den Kerndaten, die für die Berechnung der Studienplanung benötigt werden.
+solange die Kerndaten nicht geändert wurden werden Beispieldaten verwendet."""
 @dataclass
 class StudyProgram:
-    """Studiengang mit Stammdaten und den zugehörigen Semestern."""
 
     name: str
     start_date: date
@@ -17,6 +18,8 @@ class StudyProgram:
     target_grade: float = 2.0
     student_name: str = "Studierende/r"
     semesters: list[Semester] = field(default_factory=list)
+    
+#Prüfung, dass keine Felder leer gelassen werden - die Kerndaten müssen vollständig sein
     def __post_init__(self) -> None:
         """Prüft Studiengangsnamen und Zielwerte."""
         if not self.name.strip():

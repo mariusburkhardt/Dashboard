@@ -82,7 +82,7 @@ package "Application" {
     }
 }
 
-package "Data transfer / DTO (dto.py)" {
+package "Data transfer / DTO" {
     class "DashboardData\n(dto.py)" as DashboardData {
         +program_name: str
         +student_name: str
@@ -122,10 +122,11 @@ package "Data transfer / DTO (dto.py)" {
         AT_RISK
         OVERDUE
     }
-}
 
-package "JSON import/export" {
-    component "transfer.py\nJSON-Import und -Export" as JsonTransfer
+    class "JSON transfer\n(transfer.py)" as JsonTransfer {
+        +export_study_program(program: StudyProgram, path: Path): None
+        +import_study_program(path: Path): StudyProgram
+    }
 }
 
 package "Presentation" {
@@ -141,7 +142,7 @@ package "Startup" {
         +start(): None
     }
 
-    component "main.py\nmain()" as Main
+    class "main\n(main.py)" as Main
 }
 
 StudyProgram "1" *-- "0..*" Semester
@@ -168,13 +169,7 @@ DashboardData ..> OverallStatus
 
 DashboardView --> DashboardController
 DashboardView ..> DashboardData
-DashboardView ..> StudyProgram
-DashboardView ..> Module
-DashboardView ..> Assessment
-DashboardView ..> AssessmentType
-DashboardView ..> AssessmentStatus
-DashboardView ..> OverallStatus
-DashboardView "1" *-- "0..*" ProgressBar
+ProgressBar --> DashboardView
 
 DashboardApplication --> SQLiteStudyProgramRepository : creates
 DashboardApplication --> DashboardService : creates
